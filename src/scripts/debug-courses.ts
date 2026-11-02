@@ -1,10 +1,10 @@
-import { dbEnabled, demoUserId } from "./src/lib/env";
-import { demoUserCourses } from "./src/lib/repo";
+import { env, demoUserId } from "@/lib/env";
+import { listUserCourses } from "@/lib/repo";
 
 async function main() {
-  console.log("dbEnabled:", dbEnabled());
+  console.log("dbEnabled:", env.dbEnabled);
   console.log("demoUserId:", demoUserId);
-  const courses = await demoUserCourses(200);
+  const courses = await listUserCourses(demoUserId,200);
   console.log("Number of demo courses:", courses.length);
   courses.forEach((c: any, i: number) => {
     console.log(`Course ${i}:`, c.id, c.title?.slice(0, 50));
