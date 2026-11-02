@@ -1,0 +1,16 @@
+
+services:
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+    ports:
+      - 5439:5432
+    environment:
+      - POSTGRES_USER=dave
+      - POSTGRES_PASSWORD=dave
+      - POSTGRES_DB=db
+    volumes:
+      - pg_data_ai:/var/lib/postgresql/data
+
+volumes:
+  pg_data_ai:
