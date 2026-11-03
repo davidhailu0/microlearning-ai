@@ -28,7 +28,7 @@ const bodySchema = z
   });
 
 export const runtime = "nodejs";
-export const maxDuration = 600;
+export const maxDuration = 200;
 
 export async function POST(request: Request) {
   const user = await getCurrentUser();
