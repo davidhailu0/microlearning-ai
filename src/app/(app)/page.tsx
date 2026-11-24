@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
-  BookOpen,
   Clock,
   Flame,
   Layers,
@@ -15,7 +14,6 @@ import { getDashboard } from "@/lib/repo";
 import { CreateBar } from "@/components/dashboard/create-bar";
 import { ProgressCard } from "@/components/course/progress-card";
 import { CourseHistory } from "@/components/course/course-history";
-import { LibraryGrid } from "@/components/course/library-grid";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -167,23 +165,6 @@ export default async function DashboardPage() {
           </section>
         )}
 
-        {/* --------------------------------------------------------- library */}
-        <section className="mt-12">
-          <SectionHeading
-            title="The library"
-            subtitle="Short courses built to be finished, not bookmarked."
-            action={
-              <span className="hidden items-center gap-1 text-xs text-muted-foreground sm:inline-flex">
-                <BookOpen className="size-3.5" />
-                {data.curated.length} curated courses
-              </span>
-            }
-          />
-          <div className="mt-4">
-            <LibraryGrid courses={data.curated} />
-          </div>
-        </section>
-
         <ModeNote />
       </div>
     </div>
@@ -275,7 +256,7 @@ function ModeNote() {
       <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
         {env.dbEnabled
           ? "Courses, streaks, and review schedules persist in Postgres."
-          : "Without DATABASE_URL, everything lives in memory and resets when the server restarts. Curated courses and the full review loop still work."}{" "}
+          : "Without DATABASE_URL, everything lives in memory and resets when the server restarts. Your generated courses and the full review loop still work."}{" "}
         {!env.aiEnabled
           ? "Add OPENAI_API_KEY, OPENROUTER_API_KEY, or FREELLMAPI_API_KEY to generate real courses and a live tutor. Until then, new courses use the deterministic local generator."
           : env.ttsEnabled

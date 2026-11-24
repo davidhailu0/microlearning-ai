@@ -1,0 +1,116 @@
+=== SOURCE MATERIAL INVENTORY ===
+Root book files (6):
+  Code_The_Hidden_Language_of_Computer_Hardware_and_Software,_2nd.epub
+  Hacker_Disassembling_Uncovered_Kris_Kaspersky_z_library_sk,_1lib (2).epub
+  Prentice_Hall_Structured_Computer_Organization_6th_Edition_0132916525 (2).pdf
+  _OceanofPDF.com_Designing_Data-Intensive_Applications_-_Martin_Kleppmann.epub
+  _OceanofPDF.com_From_Day_Zero_to_Zero_Day_-_Eugene_Lim.pdf
+  _OceanofPDF.com_Fundamentals_of_Software_Architecture_2E_-_Mark_Richards.epub
+Cached parsed texts (6): code-hidden-language.txt, computer-organization.txt, ddia.txt, fundamentals.txt, hacker-disassembling.txt, zero-day.txt
+
+=== BOOK COURSES ===
+
+## From Day Zero to Zero Day
+  file: .cache/books/zero-day.txt | draft: From Day Zero to Zero Day
+  course: 4 modules, 20 lessons
+  structure: quiz 20/20, flashcards>=2 20/20, label 20/20, diagrams 20/20
+  source: 16 parsed sections
+  excluded non-teaching sections (1): 0
+  page ranges: 20 ranges spanning pp. 15-321
+  page coverage gaps (teaching sections): none
+  excluded page sections (front/back matter): 0
+  section-index coverage: 15/15 cited; uncovered: none
+  hands-on steps authored for 20 lesson titles; matched in current draft: 20
+
+## Fundamentals of Software Architecture
+  file: .cache/books/fundamentals.txt | draft: Fundamentals of Software Architecture
+  course: 5 modules, 29 lessons
+  structure: quiz 29/29, flashcards>=2 29/29, label 29/29, diagrams 29/29
+  source: 55 parsed sections
+  excluded non-teaching sections (2): 53-54
+  coverage: 53/53 body sections cited (100.0%)
+  cited sections: 0-52
+  uncovered body sections (0): none
+  hands-on steps authored for 29 lesson titles; matched in current draft: 29
+
+## Code
+  file: .cache/books/code-hidden-language.txt | draft: Code: The Hidden Language of Computer Hardware and Software
+  course: 4 modules, 12 lessons
+  structure: quiz 12/12, flashcards>=2 12/12, label 12/12, diagrams 12/12
+  source: 33 parsed sections
+  excluded non-teaching sections (5): 0-3,32
+  coverage: 28/28 body sections cited (100.0%)
+  cited sections: 4-31
+  uncovered body sections (0): none
+  hands-on steps authored for 12 lesson titles; matched in current draft: 12
+
+## Hacker Disassembling
+  file: .cache/books/hacker-disassembling.txt | draft: Hacker Disassembling Uncovered
+  course: 4 modules, 15 lessons
+  structure: quiz 15/15, flashcards>=2 15/15, label 15/15, diagrams 15/15
+  source: 46 parsed sections
+  excluded non-teaching sections (3): 0-2
+  coverage: 43/43 body sections cited (100.0%)
+  cited sections: 3-45
+  uncovered body sections (0): none
+  hands-on steps authored for 15 lesson titles; matched in current draft: 15
+
+## Structured Computer Organization
+  file: .cache/books/computer-organization.txt | draft: Structured Computer Organization
+  course: 4 modules, 16 lessons
+  structure: quiz 16/16, flashcards>=2 16/16, label 16/16, diagrams 16/16
+  source: 45 parsed sections
+  excluded non-teaching sections (11): 0-5,40-44
+  page ranges: 16 ranges spanning pp. 27-683
+  page coverage gaps (teaching sections): none
+  excluded page sections (front/back matter): 0-5,40-44
+  section-index coverage: 34/34 cited; uncovered: none
+  hands-on steps authored for 16 lesson titles; matched in current draft: 16
+
+## Designing Data-Intensive Applications
+  file: .cache/books/ddia.txt | draft: Designing Data-Intensive Applications
+  course: 5 modules, 18 lessons
+  structure: quiz 18/18, flashcards>=2 18/18, label 18/18, diagrams 18/18
+  source: 52 parsed sections
+  excluded non-teaching sections (4): 0-1,50-51
+  coverage: 48/48 body sections cited (100.0%)
+  cited sections: 2-49
+  uncovered body sections (0): none
+  hands-on steps authored for 18 lesson titles; matched in current draft: 18
+
+=== ONLINE / BUILD-YOUR-OWN COURSES ===
+
+## Build Your Own Operating System
+  5 modules, 7 lessons, 38 hands-on steps
+  structure: quiz 7/7, flashcards>=2 7/7, diagrams 7/7
+  hands-on step sets: 6; matched to current lessons: 6
+
+## Build Your Own Neural Network
+  5 modules, 6 lessons, 29 hands-on steps
+  structure: quiz 6/6, flashcards>=2 6/6, diagrams 6/6
+  hands-on step sets: 5; matched to current lessons: 5
+
+## Build Your Own Processor
+  5 modules, 6 lessons, 30 hands-on steps
+  structure: quiz 6/6, flashcards>=2 6/6, diagrams 6/6
+  hands-on step sets: 5; matched to current lessons: 5
+
+## Build Your Own Programming Language
+  5 modules, 5 lessons, 28 hands-on steps
+  structure: quiz 5/5, flashcards>=2 5/5, diagrams 5/5
+  hands-on step sets: 4; matched to current lessons: 4
+
+## Build Your Own Blockchain
+  5 modules, 5 lessons, 28 hands-on steps
+  structure: quiz 5/5, flashcards>=2 5/5, diagrams 5/5
+  hands-on step sets: 4; matched to current lessons: 4
+
+## Build Your Own Database
+  5 modules, 5 lessons, 28 hands-on steps
+  structure: quiz 5/5, flashcards>=2 5/5, diagrams 5/5
+  hands-on step sets: 4; matched to current lessons: 4
+
+=== TOTALS ===
+  books: 6; book lessons: 110
+  online courses: 6; online lessons: 34
+  total authored lessons: 144

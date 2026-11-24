@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, BookOpen, Clock, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Clock, X } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import { getLesson } from "@/lib/repo";
+import { checkpointForCompleted } from "@/lib/checkpoints";
 import { AudioPlayer } from "@/components/lesson/audio-player";
 import { BlockRenderer } from "@/components/lesson/block-renderer";
 import { CompleteBar } from "@/components/lesson/complete-bar";
@@ -36,6 +37,13 @@ export default async function LessonPage({
             : ""
         }`
       : null;
+  const checkpointIndex =
+    lesson.totalLessons >= 4
+      ? checkpointForCompleted(lesson.totalLessons, position + 1)
+      : null;
+  const checkpointHref = checkpointIndex
+    ? `/course/${lesson.courseId}/review/${checkpointIndex}`
+    : null;
 
   return (
     <div className="min-h-svh bg-background">
@@ -95,7 +103,7 @@ export default async function LessonPage({
         </h1>
 
         {lesson.objective && (
-          <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 max-w-[68ch] text-[15px] leading-6 text-foreground/65 text-pretty">
             {lesson.objective}
           </p>
         )}
@@ -108,11 +116,19 @@ export default async function LessonPage({
           />
         </div>
 
-        <div className="mt-8">
-          <BlockRenderer blocks={lesson.blocks} />
+        <div className="mt-9">
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              The lesson
+            </span>
+            <span aria-hidden="true" className="h-px flex-1 bg-border" />
+          </div>
+          <div className="mt-5">
+            <BlockRenderer blocks={lesson.blocks} />
+          </div>
         </div>
 
-        {lesson.sourceRef && (
+        {lesson.sourceRef && lesson.sourceRef.sectionIndexes.length > 0 && (
           <aside className="mt-8 border-l-2 border-foreground/20 pl-4">
             <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               <BookOpen className="size-3" />
@@ -127,8 +143,25 @@ export default async function LessonPage({
                 {lesson.sourceRef.note}
               </p>
             )}
+            {lesson.sourceRef.sectionIndexes.length > 0 && (
+              <Link
+                href={`/lesson/${lesson.id}/read`}
+                className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-border/70 bg-card px-2.5 py-1.5 text-[11px] font-medium text-foreground transition-colors hover:bg-muted"
+              >
+                <BookOpen className="size-3.5" />
+                Read the original sections
+                <ArrowUpRight className="size-3.5 text-muted-foreground" />
+              </Link>
+            )}
           </aside>
         )}
+
+        <div className="mt-12 flex items-center gap-3">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            Practice
+          </span>
+          <span aria-hidden="true" className="h-px flex-1 bg-border" />
+        </div>
 
         <TeachBack
           lessonId={lesson.id}
@@ -137,8 +170,20 @@ export default async function LessonPage({
         />
 
         {lesson.quiz && (
-          <div className="mt-10">
-            <QuizCard quiz={lesson.quiz} />
+          <div className="mt-8 space-y-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              {lesson.extraQuizzes.length > 0
+                ? `${lesson.extraQuizzes.length + 1} questions`
+                : "Check your understanding"}
+            </p>
+            {[lesson.quiz, ...lesson.extraQuizzes].map((quiz, index) => (
+              <QuizCard
+                key={quiz.questionId}
+                quiz={quiz}
+                position={index + 1}
+                total={lesson.extraQuizzes.length + 1}
+              />
+            ))}
           </div>
         )}
 
@@ -149,6 +194,7 @@ export default async function LessonPage({
             courseId={lesson.courseId}
             completed={lesson.completed}
             xpReward={lesson.xpReward}
+            reviewHref={checkpointHref}
           />
         </div>
 

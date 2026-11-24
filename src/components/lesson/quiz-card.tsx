@@ -15,7 +15,15 @@ type Result = {
 
 const LETTERS = ["A", "B", "C", "D"];
 
-export function QuizCard({ quiz }: { quiz: QuizView }) {
+export function QuizCard({
+  quiz,
+  position,
+  total,
+}: {
+  quiz: QuizView;
+  position?: number;
+  total?: number;
+}) {
   const [selected, setSelected] = React.useState<string | null>(null);
   const [result, setResult] = React.useState<Result | null>(null);
   const [pending, setPending] = React.useState(false);
@@ -30,7 +38,7 @@ export function QuizCard({ quiz }: { quiz: QuizView }) {
       const response = await fetch(`/api/quizzes/${quiz.id}/submit`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ optionId: selected }),
+        body: JSON.stringify({ optionId: selected, questionId: quiz.questionId }),
       });
       const payload = (await response.json()) as Result & { error?: string };
 
@@ -50,7 +58,7 @@ export function QuizCard({ quiz }: { quiz: QuizView }) {
     <section className="rounded-xl border border-border/70 bg-card p-5">
       <div className="flex items-center justify-between">
         <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-          Check your understanding
+          {position && total ? `Question ${position} of ${total}` : "Check your understanding"}
         </p>
         <span className="text-[10px] text-muted-foreground">+{quiz.points} XP</span>
       </div>

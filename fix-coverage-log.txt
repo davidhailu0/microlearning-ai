@@ -1,0 +1,2 @@
+ZD: added section 0 to first citation
+FSA: expanded sectionIndexes by chapter membership

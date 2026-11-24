@@ -9,7 +9,7 @@ export const diagramSchema = z.object({
         id: z.string().max(24),
         label: z.string().max(60),
         emphasis: z.boolean(),
-      }),
+      })
     )
     .min(2)
     .max(10),
@@ -19,16 +19,16 @@ export const diagramSchema = z.object({
         from: z.string().max(24),
         to: z.string().max(24),
         label: z.string().max(40),
-      }),
+      })
     )
     .max(12),
 });
 
 export const quizDraftSchema = z.object({
   question: z.string().max(500),
-  options: z.array(z.string().max(300)).length(4),
+  options: z.array(z.string().max(500)).length(4),
   correctIndex: z.number().int().min(0).max(3),
-  explanation: z.string().max(800),
+  explanation: z.string().max(1200),
 });
 
 export const flashcardDraftSchema = z.object({
@@ -39,8 +39,8 @@ export const flashcardDraftSchema = z.object({
 /** Resolved citation stored on a lesson and written to the citations table. */
 export const sourceRefSchema = z.object({
   label: z.string().max(200),
-  pageStart: z.number().int().positive().nullable(),
-  pageEnd: z.number().int().positive().nullable(),
+  pageStart: z.number().int().positive().nullable().default(null),
+  pageEnd: z.number().int().positive().nullable().default(null),
   note: z.string().max(600),
   sectionIndexes: z.array(z.number().int().min(0)).max(10),
 });
@@ -51,12 +51,24 @@ export const lessonDraftSchema = z.object({
   hook: z.string().max(500),
   // Length is capped after parsing (see normalize/finalize), not in the JSON
   // schema: one over-long paragraph should not fail a whole book generation.
-  paragraphs: z.array(z.string().max(4000)).min(1).max(4),
-  bullets: z.array(z.string().max(600)).min(3).max(4),
-  takeaway: z.string().max(600),
+  paragraphs: z.array(z.string().max(5000)).min(1).max(20),
+  bullets: z.array(z.string().max(900)).min(3).max(16),
+  /** Hands-on implementation steps the learner can follow in order. */
+  steps: z
+    .array(
+      z.object({
+        title: z.string().max(160),
+        detail: z.string().max(900),
+      }),
+    )
+    .max(16)
+    .optional(),
+  takeaway: z.string().max(900),
   diagram: diagramSchema.nullable(),
   quiz: quizDraftSchema,
-  flashcards: z.array(flashcardDraftSchema).length(2),
+  /** Extra questions asked after the primary `quiz` (same quiz row). */
+  extraQuestions: z.array(quizDraftSchema).max(12).optional(),
+  flashcards: z.array(flashcardDraftSchema).min(2).max(8),
 });
 
 export const moduleDraftSchema = z.object({
@@ -75,15 +87,12 @@ export const courseDraftSchema = z.object({
   level: z.enum(["beginner", "intermediate", "advanced"]).default("beginner"),
   coverEmoji: z.string().max(8).default("📘"),
   tags: z.array(z.string().max(30)).max(5).default([]),
-  modules: z.array(moduleDraftSchema).min(3).max(5),
+  modules: z.array(moduleDraftSchema).min(3).max(8),
 });
 
 /* ------------------------------------------------------------- book mode */
 
-/**
- * The model identifies which parsed sections a lesson came from; the pipeline
- * resolves that index list into a human-readable chapter/page citation.
- */
+/** The model identifies which parsed sections a lesson came from; the pipeline resolves that index list into a human-readable chapter/page citation. */
 export const bookSourceRefDraftSchema = z.object({
   sectionIndexes: z.array(z.number().int().min(0)).max(8),
   note: z.string().max(600),
@@ -121,7 +130,7 @@ export const bookPlanSchema = z.object({
         chunkIndex: z.number().int().min(0),
         title: z.string().max(180),
         summary: z.string().max(600).default(""),
-      }),
+      })
     )
     .min(1)
     .max(20),

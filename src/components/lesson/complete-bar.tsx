@@ -13,12 +13,14 @@ export function CompleteBar({
   courseId,
   completed,
   xpReward,
+  reviewHref,
 }: {
   lessonId: string;
   nextLessonId: string | null;
   courseId: string;
   completed: boolean;
   xpReward: number;
+  reviewHref?: string | null;
 }) {
   const router = useRouter();
   const [pending, setPending] = React.useState(false);
@@ -30,10 +32,16 @@ export function CompleteBar({
       if (!response.ok) throw new Error("Request failed");
 
       toast.success(`Lesson complete · +${xpReward} XP`, {
-        description: nextLessonId ? "Next lesson unlocked." : "You finished the course.",
+        description: reviewHref
+          ? "Checkpoint review unlocked."
+          : nextLessonId
+            ? "Next lesson unlocked."
+            : "You finished the course.",
       });
 
-      router.push(nextLessonId ? `/lesson/${nextLessonId}` : `/course/${courseId}`);
+      router.push(
+        reviewHref ?? (nextLessonId ? `/lesson/${nextLessonId}` : `/course/${courseId}`),
+      );
       router.refresh();
     } catch {
       toast.error("Couldn't save your progress. Try again.");

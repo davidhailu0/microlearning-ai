@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local, gitignored cache of parsed source books plus its throwaway
+    // debugging scripts.
+    ".cache/**",
   ]),
 ]);
 

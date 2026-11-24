@@ -1,0 +1,55 @@
+=== Zero-Day Lesson 1 quiz shape ===
+{
+  "question": "Which statement best separates a vulnerability from a bug?",
+  "options": [
+    "The vulnerability appears in the CVE catalog and the bug does not",
+    "A threat source can exploit it to cross a security boundary",
+    "The vulnerability is exploitable only by the system's own administrators",
+    "Bugs are always fixed, while vulnerabilities are always left open"
+  ],
+  "correctIndex": 1,
+  "explanation": "NIST's definition requires exploitability by a threat source. The Postgres SIGHUP example fails this test: an attacker who already has superuser access can do worse without any 'exploit', so it never crossed a security boundary."
+}
+
+=== Zero-Day Lesson 1 sourceRef ===
+{
+  "label": "Introduction – Chapter 0: Day Zero",
+  "pageStart": 15,
+  "pageEnd": 30,
+  "note": "NIST definition, CIA triad, bug vs vulnerability, and disputed CVE records for curl and Postgres.",
+  "sectionIndexes": [
+    1,
+    2
+  ]
+}
+
+=== FSA Lesson 1 quiz shape ===
+{
+  "question": "According to the book's definition, which dimension of architecture records the rules for how a system should be constructed?",
+  "options": [
+    "Architecture characteristics",
+    "Logical components",
+    "Architecture decisions",
+    "The architecture style"
+  ],
+  "correctIndex": 2,
+  "explanation": "Architecture decisions define constraints - for example, only Business and Services layers may access the database - and direct teams on what is and isn't allowed."
+}
+
+=== FSA Lesson 1 sourceRef + chapters ===
+{
+  "sourceRef": {
+    "label": "Chapter 1. Introduction",
+    "pageStart": null,
+    "pageEnd": null,
+    "note": "Defining software architecture: the four dimensions and the role of context.",
+    "sectionIndexes": [
+      0,
+      1
+    ]
+  }
+}
+
+=== FSA course sourceKind field keys ===
+["title","description","category","level","coverEmoji","tags","modules"]
+{}

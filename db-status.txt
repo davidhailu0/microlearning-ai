@@ -1,0 +1,117 @@
+=== COURSES IN DB: 12 ===
+[6594a96a] From Day Zero to Zero Day | kind=pdf | source="From Day Zero to Zero Day" | author="Eugene Lim"
+[393ff64d] Fundamentals of Software Architecture | kind=epub | source="Fundamentals of Software Architecture" | author="Mark Richards and Neal Ford"
+[700af6ae] Structured Computer Organization | kind=pdf | source="Structured Computer Organization" | author="Andrew S. Tanenbaum and Todd Austin"
+[8bbcc622] Code: The Hidden Language of Computer Hardware and Software | kind=epub | source="Code: The Hidden Language of Computer Hardware and Software" | author="Charles Petzold"
+[79de52e6] Hacker Disassembling Uncovered | kind=epub | source="Hacker Disassembling Uncovered" | author="Kris Kaspersky"
+[176e9800] Designing Data-Intensive Applications | kind=epub | source="Designing Data-Intensive Applications" | author="Martin Kleppmann"
+[1771986a] Build Your Own Database | kind=text | source="Build Your Own Database" | author="CodeCrafters community"
+[c5edfa90] Build Your Own Blockchain | kind=text | source="Build Your Own Blockchain" | author="CodeCrafters community"
+[ffba7bd0] Build Your Own Neural Network | kind=text | source="Build Your Own Neural Network" | author="CodeCrafters community"
+[7bec114d] Build Your Own Operating System | kind=text | source="Build Your Own Operating System" | author="CodeCrafters community"
+[3bff3559] Build Your Own Processor | kind=text | source="Build Your Own Processor" | author="CodeCrafters community"
+[a4300156] Build Your Own Programming Language | kind=text | source="Build Your Own Programming Language" | author="CodeCrafters community"
+
+=== MODULES PER COURSE ===
+  Build Your Own Programming Language: 5 modules
+  Hacker Disassembling Uncovered: 4 modules
+  Build Your Own Neural Network: 5 modules
+  Fundamentals of Software Architecture: 5 modules
+  Build Your Own Processor: 5 modules
+  Build Your Own Blockchain: 5 modules
+  Structured Computer Organization: 4 modules
+  Code: The Hidden Language of Computer Hardware and Software: 4 modules
+  Build Your Own Database: 5 modules
+  From Day Zero to Zero Day: 4 modules
+  Designing Data-Intensive Applications: 5 modules
+  Build Your Own Operating System: 5 modules
+
+=== LESSONS PER COURSE ===
+  Build Your Own Programming Language: 5 lessons
+  Hacker Disassembling Uncovered: 15 lessons
+  Build Your Own Neural Network: 6 lessons
+  Fundamentals of Software Architecture: 29 lessons
+  Build Your Own Processor: 6 lessons
+  Build Your Own Blockchain: 5 lessons
+  Structured Computer Organization: 16 lessons
+  Code: The Hidden Language of Computer Hardware and Software: 12 lessons
+  Build Your Own Database: 5 lessons
+  From Day Zero to Zero Day: 20 lessons
+  Designing Data-Intensive Applications: 18 lessons
+  Build Your Own Operating System: 7 lessons
+  TOTAL: 144
+
+=== CITATIONS TABLE PER COURSE ===
+  Build Your Own Programming Language: 5 citation rows
+  Hacker Disassembling Uncovered: 15 citation rows
+  Build Your Own Neural Network: 6 citation rows
+  Fundamentals of Software Architecture: 29 citation rows
+  Build Your Own Processor: 6 citation rows
+  Build Your Own Blockchain: 5 citation rows
+  Structured Computer Organization: 16 citation rows
+  Code: The Hidden Language of Computer Hardware and Software: 12 citation rows
+  Build Your Own Database: 5 citation rows
+  From Day Zero to Zero Day: 20 citation rows
+  Designing Data-Intensive Applications: 18 citation rows
+  Build Your Own Operating System: 7 citation rows
+  TOTAL citations: 144
+
+=== QUIZZES PER COURSE ===
+  Build Your Own Programming Language: 5 quizzes
+  Hacker Disassembling Uncovered: 15 quizzes
+  Build Your Own Neural Network: 6 quizzes
+  Fundamentals of Software Architecture: 29 quizzes
+  Build Your Own Processor: 6 quizzes
+  Build Your Own Blockchain: 5 quizzes
+  Structured Computer Organization: 16 quizzes
+  Code: The Hidden Language of Computer Hardware and Software: 12 quizzes
+  Build Your Own Database: 5 quizzes
+  From Day Zero to Zero Day: 20 quizzes
+  Designing Data-Intensive Applications: 18 quizzes
+  Build Your Own Operating System: 7 quizzes
+  TOTAL questions: 720 (expect 5x lessons = 720)
+  TOTAL quiz options: 2880 (expect 4x questions = 2880)
+
+=== FLASHCARDS PER COURSE ===
+  Build Your Own Programming Language: 26 flashcards
+  Hacker Disassembling Uncovered: 75 flashcards
+  Build Your Own Neural Network: 30 flashcards
+  Fundamentals of Software Architecture: 145 flashcards
+  Build Your Own Blockchain: 25 flashcards
+  Structured Computer Organization: 80 flashcards
+  Build Your Own Processor: 39 flashcards
+  Code: The Hidden Language of Computer Hardware and Software: 60 flashcards
+  Build Your Own Database: 25 flashcards
+  From Day Zero to Zero Day: 100 flashcards
+  Designing Data-Intensive Applications: 90 flashcards
+  Build Your Own Operating System: 35 flashcards
+  TOTAL flashcards: 730 (expect 5x lessons = 720)
+
+=== SOURCES TABLE ===
+  [epub] Code: The Hidden Language of Computer Hardware and Software by Charles Petzold | wordCount=127898 charCount=742039
+  [epub] Designing Data-Intensive Applications by Martin Kleppmann | wordCount=264002 charCount=1725030
+  [pdf] Structured Computer Organization by Andrew S. Tanenbaum and Todd Austin | wordCount=334382 charCount=1917274
+  [pdf] From Day Zero to Zero Day by Eugene Lim | wordCount=99807 charCount=664105
+  [text] Build Your Own Database by CodeCrafters community | wordCount=55000 charCount=400000
+  [text] Build Your Own Blockchain by CodeCrafters community | wordCount=45000 charCount=300000
+  [text] Build Your Own Neural Network by CodeCrafters community | wordCount=55000 charCount=350000
+  [text] Build Your Own Operating System by CodeCrafters community | wordCount=45000 charCount=300000
+  [text] Build Your Own Processor by CodeCrafters community | wordCount=40000 charCount=250000
+  [text] Build Your Own Programming Language by CodeCrafters community | wordCount=50000 charCount=350000
+  [epub] Fundamentals of Software Architecture by Mark Richards and Neal Ford | wordCount=147300 charCount=1016784
+  [epub] Hacker Disassembling Uncovered by Kris Kaspersky | wordCount=82315 charCount=500180
+
+=== PROGRESS TRACKING ===
+  lesson_progress: 6
+  course_progress: 1
+  card_states (FSRS): 12
+  reviews: 0
+  quiz_attempts: 6
+
+=== ROADMAP FILES ===
+  ROADMAP-FROM-DAY-ZERO-TO-ZERO-DAY.md: EXISTS
+  ROADMAP-FUNDAMENTALS-OF-SOFTWARE-ARCHITECTURE.md: EXISTS
+  ROADMAP-CODE-HIDDEN-LANGUAGE.md: EXISTS
+  ROADMAP-HACKER-DISASSEMBLING.md: EXISTS
+  ROADMAP-STRUCTURED-COMPUTER-ORGANIZATION.md: EXISTS
+  ROADMAP-DESIGNING-DATA-INTENSIVE-APPLICATIONS.md: EXISTS

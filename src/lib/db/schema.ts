@@ -37,6 +37,8 @@ export const blockType = pgEnum("block_type", [
   "hook",
   "paragraph",
   "bullets",
+  "steps",
+  "example",
   "takeaway",
   "callout",
   "quote",
@@ -275,6 +277,23 @@ export const sources = pgTable("sources", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+export const sourceSections = pgTable(
+  "source_sections",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    courseId: uuid("course_id")
+      .notNull()
+      .references(() => courses.id, { onDelete: "cascade" }),
+    sectionIndex: integer("section_index").notNull(),
+    title: text("title").notNull(),
+    text: text("text").notNull(),
+    wordCount: integer("word_count").notNull().default(0),
+    pageStart: integer("page_start"),
+    pageEnd: integer("page_end"),
+  },
+  (t) => [uniqueIndex("source_sections_course_idx").on(t.courseId, t.sectionIndex)],
+);
+
 /* --------------------------------------------------------------- quizzes */
 
 export const quizzes = pgTable("quizzes", {
@@ -453,6 +472,31 @@ export const lessonProgress = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.lessonId] })],
+);
+
+export const checkpointProgress = pgTable(
+  "checkpoint_progress",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    courseId: uuid("course_id")
+      .notNull()
+      .references(() => courses.id, { onDelete: "cascade" }),
+    checkpointIndex: integer("checkpoint_index").notNull(),
+    score: integer("score").notNull().default(0),
+    total: integer("total").notNull().default(0),
+    completedAt: timestamp("completed_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("checkpoint_progress_user_course_idx").on(
+      t.userId,
+      t.courseId,
+      t.checkpointIndex,
+    ),
+  ],
 );
 
 /* -------------------------------------------------------------- pipeline */

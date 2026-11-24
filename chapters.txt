@@ -1,0 +1,52 @@
+=== FSA BOOK: 27 unique chapter markers ===
+  Chapter 1, Chapter 2, Chapter 3, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, Chapter 9, Chapter 10, Chapter 11, Chapter 12, Chapter 13, Chapter 14, Chapter 15, Chapter 16, Chapter 17, Chapter 18, Chapter 19, Chapter 20, Chapter 21, Chapter 22, Chapter 23, Chapter 24, Chapter 25, Chapter 26, Chapter 27
+
+=== FSA LESSON CITATION LABELS: 29 rows, chapters mentioned: 27 ===
+  Chapter 1, Chapter 2, Chapter 3, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, Chapter 9, Chapter 10, Chapter 11, Chapter 12, Chapter 13, Chapter 14, Chapter 15, Chapter 16, Chapter 17, Chapter 18, Chapter 19, Chapter 20, Chapter 21, Chapter 22, Chapter 23, Chapter 24, Chapter 25, Chapter 26, Chapter 27
+
+=== FSA CHAPTERS NOT MENTIONED IN ANY CITATION LABEL: 0 ===
+  NONE
+
+=== ZERO-DAY BOOK: 0 unique chapter markers ===
+  
+  cited in labels: Chapter 0, Chapter 1, Chapter 2, Chapter 3, Chapter 4, Chapter 5, Chapter 6, Chapter 7, Chapter 8, Chapter 9, Chapter 10
+  NOT cited: NONE
+
+=== listUserCourses (what the dashboard shows) ===
+  courses returned: 36
+    - Build Your Own Database (text)
+    - Build Your Own Blockchain (text)
+    - Build Your Own Programming Language (text)
+    - Build Your Own Processor (text)
+    - Build Your Own Neural Network (text)
+    - Build Your Own Operating System (text)
+    - Fundamentals of Software Architecture (epub)
+    - From Day Zero to Zero Day (pdf)
+    - Build Your Own Processor (text)
+    - Build Your Own Neural Network (text)
+    - Build Your Own Operating System (text)
+    - Fundamentals of Software Architecture (epub)
+    - From Day Zero to Zero Day (pdf)
+    - Build Your Own Processor (text)
+    - Build Your Own Neural Network (text)
+    - Build Your Own Operating System (text)
+    - Fundamentals of Software Architecture (epub)
+    - From Day Zero to Zero Day (pdf)
+    - Build Your Own Processor (text)
+    - Build Your Own Neural Network (text)
+    - Build Your Own Operating System (text)
+    - Fundamentals of Software Architecture (epub)
+    - From Day Zero to Zero Day (pdf)
+    - Build Your Own Operating System (text)
+    - Fundamentals of Software Architecture (epub)
+    - From Day Zero to Zero Day (pdf)
+    - Fundamentals of Software Architecture (epub)
+    - From Day Zero to Zero Day (pdf)
+    - Fundamentals of Software Architecture (epub)
+    - From Day Zero to Zero Day (pdf)
+    - Fundamentals of Software Architecture (epub)
+    - From Day Zero to Zero Day (pdf)
+    - Fundamentals of Software Architecture (epub)
+    - From Day Zero to Zero Day (pdf)
+    - From Day Zero to Zero Day (pdf)
+    - From Day Zero to Zero Day: An Introduction to Vulnerability Research (pdf)

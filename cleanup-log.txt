@@ -1,0 +1,13 @@
+KEEP [1afc102c] From Day Zero to Zero Day (pdf::From Day Zero to Zero Day) lessons=20
+KEEP [62b198ed] Fundamentals of Software Architecture (epub::Fundamentals of Software Architecture) lessons=29
+KEEP [a8f90d65] Build Your Own Operating System (text::Build Your Own Operating System) lessons=6
+KEEP [38677e1f] Build Your Own Neural Network (text::Build Your Own Neural Network) lessons=5
+KEEP [b523a606] Build Your Own Processor (text::Build Your Own Processor) lessons=5
+KEEP [5dd7e85e] Build Your Own Programming Language (text::Build Your Own Programming Language) lessons=4
+KEEP [deb82fd9] Build Your Own Blockchain (text::Build Your Own Blockchain) lessons=4
+KEEP [cd674657] Build Your Own Database (text::Build Your Own Database) lessons=4
+
+book courses=36 keep=8 delete=28
+courseProgress to be orphaned/cascaded: 0
+lessonProgress to be orphaned/cascaded: 0
+Deleted successfully

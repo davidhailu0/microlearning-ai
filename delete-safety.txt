@@ -1,0 +1,56 @@
+book courses=12 keep=12 delete=0
+xp_events with courseId: total=0 referencingKeep=0 referencingDelete=0
+jobs with courseId: total=0 referencingDelete=0
+course_progress rows=1 referencingDelete=0
+lesson_progress rows=6 referencingDelete=0
+
+=== source file mtimes ===
+  book-course-metadata.ts: 2026-11-16T06:37:24.978Z
+  book-course-steps-a.ts: 2026-11-05T11:37:20.290Z
+  book-course-steps-b.ts: 2026-11-05T11:37:21.100Z
+  book-course-steps.ts: 2026-11-05T11:37:21.360Z
+  build-your-own-blockchain.ts: 2026-11-16T06:37:25.035Z
+  build-your-own-database.ts: 2026-11-16T06:37:25.041Z
+  build-your-own-neural-network.ts: 2026-11-16T06:37:25.028Z
+  build-your-own-os.ts: 2026-11-16T06:37:25.024Z
+  build-your-own-processor.ts: 2026-11-16T06:37:25.030Z
+  build-your-own-programming-language.ts: 2026-11-16T06:37:25.032Z
+  code-hidden-language.ts: 2026-11-16T06:37:25.011Z
+  code-hidden-language.ts.bak: 2026-11-03T08:51:20.715Z
+  computer-organization.ts: 2026-11-16T06:37:25.006Z
+  computer-organization.ts.bak: 2026-11-03T08:51:20.713Z
+  course-steps.ts: 2026-11-05T10:57:37.216Z
+  ddia.ts: 2026-11-16T06:37:25.019Z
+  fundamentals.ts: 2026-11-16T06:37:24.995Z
+  hacker-disassembling.ts: 2026-11-16T06:37:25.014Z
+  hacker-disassembling.ts.bak: 2026-11-03T08:51:20.717Z
+  types.ts: 2026-11-05T11:16:16.155Z
+  zero-day.ts: 2026-11-16T06:37:24.991Z
+=== kept copies createdAt ===
+  [6594a96a] From Day Zero to Zero Day created=Tue Nov 03 2026 12:03:42 GMT+0300 (East Africa Time)
+  [393ff64d] Fundamentals of Software Architecture created=Tue Nov 03 2026 12:03:42 GMT+0300 (East Africa Time)
+  [700af6ae] Structured Computer Organization created=Wed Nov 04 2026 13:18:09 GMT+0300 (East Africa Time)
+  [8bbcc622] Code: The Hidden Language of Computer Hardware and Software created=Wed Nov 04 2026 13:18:09 GMT+0300 (East Africa Time)
+  [79de52e6] Hacker Disassembling Uncovered created=Wed Nov 04 2026 13:20:58 GMT+0300 (East Africa Time)
+  [176e9800] Designing Data-Intensive Applications created=Thu Nov 05 2026 14:03:03 GMT+0300 (East Africa Time)
+  [1771986a] Build Your Own Database created=Tue Nov 03 2026 12:03:43 GMT+0300 (East Africa Time)
+  [c5edfa90] Build Your Own Blockchain created=Tue Nov 03 2026 12:03:43 GMT+0300 (East Africa Time)
+  [ffba7bd0] Build Your Own Neural Network created=Tue Nov 03 2026 12:03:43 GMT+0300 (East Africa Time)
+  [7bec114d] Build Your Own Operating System created=Thu Nov 05 2026 14:03:54 GMT+0300 (East Africa Time)
+  [3bff3559] Build Your Own Processor created=Tue Nov 03 2026 12:03:43 GMT+0300 (East Africa Time)
+  [a4300156] Build Your Own Programming Language created=Tue Nov 03 2026 12:03:43 GMT+0300 (East Africa Time)
+
+=== kept copy completeness ===
+  [6594a96a] From Day Zero to Zero Day: 20 lessons
+  [393ff64d] Fundamentals of Software Architecture: 29 lessons
+  [700af6ae] Structured Computer Organization: 16 lessons
+  [8bbcc622] Code: The Hidden Language of Computer Hardware and Software: 12 lessons
+  [79de52e6] Hacker Disassembling Uncovered: 15 lessons
+  [176e9800] Designing Data-Intensive Applications: 18 lessons
+  [1771986a] Build Your Own Database: 5 lessons
+  [c5edfa90] Build Your Own Blockchain: 5 lessons
+  [ffba7bd0] Build Your Own Neural Network: 6 lessons
+  [7bec114d] Build Your Own Operating System: 7 lessons
+  [3bff3559] Build Your Own Processor: 6 lessons
+  [a4300156] Build Your Own Programming Language: 5 lessons
+book course owners: 00000000-0000-4000-8000-000000000001

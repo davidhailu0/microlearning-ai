@@ -11,6 +11,8 @@ export type Block =
   | { type: "hook"; text: string }
   | { type: "paragraph"; text: string }
   | { type: "bullets"; items: string[] }
+  | { type: "steps"; title?: string; items: { title: string; detail: string }[] }
+  | { type: "example"; title: string; text: string; points?: string[] }
   | { type: "takeaway"; text: string }
   | { type: "callout"; text: string; tone?: "info" | "warning" | "success" }
   | { type: "quote"; text: string; attribution?: string }
@@ -63,7 +65,6 @@ export type DashboardData = {
   dueCount: number;
   active: ActiveCourse[];
   history: UserCourse[];
-  curated: CourseSummary[];
   stats: { lessonsThisWeek: number; minutesThisWeek: number; reviewsToday: number };
 };
 
@@ -92,10 +93,17 @@ export type CourseDetail = CourseSummary & {
     summary: string;
     lessons: LessonOutlineItem[];
   }[];
+  checkpointReviews: {
+    index: number;
+    score: number;
+    total: number;
+    completedAt: string;
+  }[];
 };
 
 export type QuizView = {
   id: string;
+  questionId: string;
   question: string;
   options: { id: string; label: string }[];
   passScore: number;
@@ -118,6 +126,8 @@ export type LessonDetail = {
   audioUrl: string | null;
   audioStatus: "none" | "queued" | "generating" | "ready" | "failed";
   quiz: QuizView | null;
+  /** Additional questions in the same quiz, asked after `quiz`. */
+  extraQuizzes: QuizView[];
   /** Chapter/page provenance for book-derived lessons. */
   sourceRef: {
     label: string;
@@ -129,6 +139,36 @@ export type LessonDetail = {
   nextLessonId: string | null;
   prevLessonId: string | null;
   completed: boolean;
+};
+
+export type CheckpointQuestion = QuizView & {
+  lessonId: string;
+  lessonTitle: string;
+  lessonPosition: number;
+};
+
+export type CheckpointLesson = {
+  id: string;
+  title: string;
+  position: number;
+  takeaway: string;
+};
+
+export type CheckpointReview = {
+  courseId: string;
+  courseTitle: string;
+  index: number;
+  totalCheckpoints: number;
+  fromLesson: number;
+  toLesson: number;
+  locked: boolean;
+  completedLessons: number;
+  totalLessons: number;
+  lessons: CheckpointLesson[];
+  questions: CheckpointQuestion[];
+  completed: boolean;
+  bestScore: number | null;
+  bestTotal: number | null;
 };
 
 export type DueCard = {

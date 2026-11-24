@@ -1,13 +1,15 @@
 import "dotenv/config";
-import { eq, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import * as s from "@/lib/db/schema";
-import { CURATED, curatedDraft, heroDraft } from "@/lib/demo";
-import { completeLesson, persistCourseDraft } from "@/lib/repo";
 import { demoUserId } from "@/lib/env";
 
-const COLORS = ["amber", "emerald", "sky", "violet", "rose", "cyan"];
-
+/**
+ * Seeds the demo learner and streak only.
+ *
+ * The curated demo library was removed, so this script no longer creates
+ * courses. Use the generation flow or the book-course persistence scripts to
+ * add real courses.
+ */
 async function main() {
   if (!process.env.DATABASE_URL) {
     console.error("DATABASE_URL is required. Run in demo mode (no seed) or set it.");
@@ -38,47 +40,6 @@ async function main() {
       lastActiveDate: yesterday,
     })
     .onConflictDoNothing();
-
-  const [{ count }] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(s.courses)
-    .where(eq(s.courses.isCurated, true));
-
-  if (count > 0) {
-    console.log(`Curated library already seeded (${count} courses). Nothing to do.`);
-    return;
-  }
-
-  const hero = await persistCourseDraft({
-    draft: heroDraft(),
-    userId: demoUserId,
-    sourceKind: "curated",
-    sourceTitle: "Thinking in Systems",
-    sourceAuthor: "Lumen Library",
-    isCurated: true,
-    coverColor: "amber",
-  });
-  console.log(`  ✓ Thinking in Systems (${hero.lessonIds.length} lessons)`);
-
-  for (const [index, entry] of CURATED.entries()) {
-    const draft = curatedDraft(entry);
-
-    const result = await persistCourseDraft({
-      draft,
-      userId: demoUserId,
-      sourceKind: "curated",
-      sourceTitle: entry.title,
-      isCurated: true,
-      coverColor: COLORS[(index + 1) % COLORS.length],
-    });
-    console.log(`  ✓ ${entry.title} (${result.lessonIds.length} lessons)`);
-  }
-
-  // A little history so the dashboard and review queue are not empty on day one.
-  for (const lessonId of hero.lessonIds.slice(0, 2)) {
-    await completeLesson(demoUserId, lessonId);
-  }
-  console.log("  ✓ seeded two completed lessons and their review cards");
 
   console.log("Done. Start the app with `npm run dev`.");
 }

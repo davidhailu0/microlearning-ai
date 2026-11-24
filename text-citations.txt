@@ -1,0 +1,15 @@
+=== sourceRef presence per course (draft level) ===
+Build Your Own Operating System: lessons=7 withSourceRef=7 withLabel=7 withSectionIndexes=0 withChapterHints=0
+  sample sourceRef: {"label":"Bootloader entry","pageStart":null,"pageEnd":null,"note":"BIOS loads 512 bytes at 0x7C00 and jumps there; setting up GDT and protected mode","sectionIndexes":[]}
+Build Your Own Neural Network: lessons=6 withSourceRef=6 withLabel=6 withSectionIndexes=0 withChapterHints=0
+  sample sourceRef: {"label":"Matrix multiplication","pageStart":null,"pageEnd":null,"note":"Nested loops, dimension validation, sum-over-k","sectionIndexes":[]}
+Build Your Own Processor: lessons=6 withSourceRef=6 withLabel=6 withSectionIndexes=0 withChapterHints=0
+  sample sourceRef: {"label":"Register file","pageStart":null,"pageEnd":null,"note":"16 × 8-bit register file; read two regs simultaneously; write with we signal","sectionIndexes":[]}
+Build Your Own Programming Language: lessons=5 withSourceRef=5 withLabel=5 withSectionIndexes=0 withChapterHints=0
+  sample sourceRef: {"label":"Lexer","pageStart":null,"pageEnd":null,"note":"Character-by-character scanning, keyword recognition, token emission","sectionIndexes":[]}
+Build Your Own Blockchain: lessons=5 withSourceRef=5 withLabel=5 withSectionIndexes=0 withChapterHints=0
+  sample sourceRef: {"label":"Block structure","pageStart":null,"pageEnd":null,"note":"Block: index, timestamp, txs, proof, prev_hash, hash; hash links blocks","sectionIndexes":[]}
+Build Your Own Database: lessons=5 withSourceRef=5 withLabel=5 withSectionIndexes=0 withChapterHints=0
+  sample sourceRef: {"label":"SSTable","pageStart":null,"pageEnd":null,"note":"Immutable sorted key-value file; blocks with offsets; bloom filters; compaction merges SSTables","sectionIndexes":[]}
+Fundamentals of Software Architecture: lessons=29 withSourceRef=29 withLabel=29 withSectionIndexes=29 withChapterHints=0
+  sample sourceRef: {"label":"Chapter 1. Introduction","pageStart":null,"pageEnd":null,"note":"Defining software architecture: the four dimensions and the role of context.","sectionIndexes":[0,1]}

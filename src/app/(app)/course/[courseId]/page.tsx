@@ -7,13 +7,16 @@ import {
   Check,
   Clock,
   Layers,
+  LockKeyhole,
   Play,
+  RotateCcw,
   Sparkles,
 } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import { getCourse } from "@/lib/repo";
 import { coverTint, LEVEL_LABEL } from "@/lib/theme";
 import { formatMinutes } from "@/lib/text";
+import { checkpointRanges } from "@/lib/checkpoints";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +36,20 @@ export default async function CoursePage({
   const tint = coverTint(course.coverColor);
   const started = course.completedLessons > 0;
   const next = course.nextLessonId;
+  const orderedLessons = course.modules.flatMap((module) => module.lessons);
+  const checkpoints = checkpointRanges(orderedLessons.length).map((block, index) => {
+    const group = orderedLessons.slice(block.start, block.end);
+    const completed = group.filter((lesson) => lesson.completed).length;
+    return {
+      index: index + 1,
+      from: group[0]?.position ?? block.start + 1,
+      to: group[group.length - 1]?.position ?? block.end,
+      total: group.length,
+      completed,
+      unlocked: group.length > 0 && completed === group.length,
+      review: course.checkpointReviews.find((item) => item.index === index + 1) ?? null,
+    };
+  });
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 pb-16 pt-8 sm:px-6">
@@ -66,7 +83,7 @@ export default async function CoursePage({
           </div>
         </div>
 
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+        <p className="mt-3 max-w-prose text-[15px] leading-7 text-foreground/75 text-pretty">
           {course.description}
         </p>
 
@@ -76,19 +93,21 @@ export default async function CoursePage({
               <BookOpen className="size-3" />
               Book companion
             </p>
-            <p className="mt-1 text-xs font-medium">
-              {[
-                `Covers all ${course.coverage.sections} sections`,
-                course.coverage.words > 0
-                  ? `~${course.coverage.words.toLocaleString()} words read`
-                  : null,
-                "every lesson cites its source",
-              ]
-                .filter(Boolean)
-                .join(" · ")}
-            </p>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              <span className="rounded-md bg-background px-2 py-1 text-[11px] font-medium text-foreground/80">
+                All {course.coverage.sections} sections
+              </span>
+              {course.coverage.words > 0 && (
+                <span className="rounded-md bg-background px-2 py-1 text-[11px] font-medium text-foreground/80">
+                  ~{course.coverage.words.toLocaleString()} words read
+                </span>
+              )}
+              <span className="rounded-md bg-background px-2 py-1 text-[11px] font-medium text-foreground/80">
+                Every lesson cites its source
+              </span>
+            </div>
             {course.coverage.throughline && (
-              <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+              <p className="mt-2 text-[12.5px] leading-relaxed text-muted-foreground text-pretty">
                 <span className="font-medium text-foreground">Throughline: </span>
                 {course.coverage.throughline}
               </p>
@@ -146,6 +165,78 @@ export default async function CoursePage({
           </div>
         </div>
       </header>
+
+      {course.lessonCount >= 4 && (
+        <section className="mt-8">
+          <div className="flex items-baseline justify-between gap-3">
+            <h2 className="text-sm font-semibold tracking-tight">Review checkpoints</h2>
+            <span className="text-[11px] text-muted-foreground">Every 4–5 lessons</span>
+          </div>
+          <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+            Mixed questions from every lesson in a 4–5 lesson block, plus the key ideas to
+            repair what you miss.
+          </p>
+
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            {checkpoints.map((checkpoint) => {
+              const range =
+                checkpoint.from === checkpoint.to
+                  ? `Lesson ${checkpoint.from}`
+                  : `Lessons ${checkpoint.from}–${checkpoint.to}`;
+
+              return checkpoint.unlocked ? (
+                <Link
+                  key={checkpoint.index}
+                  href={`/course/${course.id}/review/${checkpoint.index}`}
+                  className="group rounded-xl border border-border/70 bg-card p-4 transition-colors hover:border-foreground/25 hover:bg-muted/30"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                      Checkpoint {checkpoint.index}
+                    </span>
+                    {checkpoint.review ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+                        <Check className="size-3" />
+                        Reviewed
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+                        <RotateCcw className="size-3" />
+                        Ready
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1.5 text-[13px] font-medium">{range}</p>
+                  <p className="mt-0.5 text-[11px] text-muted-foreground">
+                    {checkpoint.review
+                      ? `${checkpoint.review.score}/${checkpoint.review.total} correct · review again`
+                      : `${checkpoint.completed}/${checkpoint.total} lessons · questions from every lesson`}
+                  </p>
+                </Link>
+              ) : (
+                <div
+                  key={checkpoint.index}
+                  className="rounded-xl border border-border/60 bg-muted/20 p-4"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                      Checkpoint {checkpoint.index}
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <LockKeyhole className="size-3" />
+                      Locked
+                    </span>
+                  </div>
+                  <p className="mt-1.5 text-[13px] font-medium text-muted-foreground">{range}</p>
+                  <p className="mt-0.5 text-[11px] text-muted-foreground">
+                    {checkpoint.completed}/{checkpoint.total} lessons complete
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <div className="mt-8 space-y-6">
         {course.modules.map((module, moduleIndex) => (

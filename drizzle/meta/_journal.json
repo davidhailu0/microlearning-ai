@@ -8,6 +8,27 @@
       "when": 1793090931342,
       "tag": "0000_mixed_old_lace",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793090931343,
+      "tag": "0001_example_block",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793090931344,
+      "tag": "0002_checkpoint_progress",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793090931345,
+      "tag": "0003_source_sections",
+      "breakpoints": true
     }
   ]
 }

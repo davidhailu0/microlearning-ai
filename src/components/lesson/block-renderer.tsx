@@ -13,6 +13,14 @@ export function BlockRenderer({ blocks }: { blocks: Block[] }) {
   );
 }
 
+function Paragraph({ text }: { text: string }) {
+  return (
+    <p className="max-w-[68ch] text-[16.5px] leading-[1.8] tracking-[-0.006em] text-foreground/85 text-pretty">
+      {text}
+    </p>
+  );
+}
+
 function BlockView({ block }: { block: Block }) {
   switch (block.type) {
     case "hook":
@@ -23,20 +31,75 @@ function BlockView({ block }: { block: Block }) {
       );
 
     case "paragraph":
-      return (
-        <p className="text-[15.5px] leading-[1.78] text-foreground/85">{block.text}</p>
-      );
+      return <Paragraph text={block.text} />;
 
     case "bullets":
       return (
-        <ul className="space-y-2 rounded-xl border border-border/70 bg-card/60 p-4">
+        <ul className="space-y-2.5 rounded-xl border border-border/70 bg-card/60 p-4 sm:p-5">
           {block.items.map((item, index) => (
-            <li key={index} className="flex gap-2.5 text-[14px] leading-relaxed">
+            <li key={index} className="flex gap-2.5 text-[14.5px] leading-[1.65]">
               <Check className="mt-0.5 size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
               <span className="text-foreground/85">{item}</span>
             </li>
           ))}
         </ul>
+      );
+
+    case "steps":
+      return (
+        <section className="rounded-xl border border-border/70 bg-card p-5">
+          <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            <Sparkles className="size-3.5" />
+            {block.title ?? "Do it yourself"}
+          </p>
+          <ol className="mt-3 space-y-3">
+            {block.items.map((item, index) => (
+              <li key={index} className="flex gap-3">
+                <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-foreground text-[11px] font-semibold text-background">
+                  {index + 1}
+                </span>
+                <div>
+                  <p className="text-[14px] font-medium leading-snug">{item.title}</p>
+                  <p className="mt-0.5 text-[14px] leading-relaxed text-foreground/75">
+                    {item.detail}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+      );
+
+    case "example":
+      return (
+        <aside className="relative overflow-hidden rounded-xl border border-amber-200/80 bg-amber-50/55 p-5 dark:border-amber-500/25 dark:bg-amber-500/10">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-6 -top-6 size-20 rounded-full bg-amber-300/25 blur-2xl dark:bg-amber-400/10"
+          />
+          <div className="flex items-center gap-2">
+            <span className="grid size-7 place-items-center rounded-lg bg-amber-200/70 text-amber-800 dark:bg-amber-400/20 dark:text-amber-200">
+              <Lightbulb className="size-4" />
+            </span>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-800/80 dark:text-amber-200/80">
+              Example
+            </p>
+          </div>
+          <p className="mt-2 text-[14.5px] font-semibold leading-snug">{block.title}</p>
+          <p className="mt-1 text-[14px] leading-relaxed text-foreground/80 text-pretty">
+            {block.text}
+          </p>
+          {block.points?.length ? (
+            <ul className="mt-3 space-y-1.5">
+              {block.points.map((point) => (
+                <li key={point} className="flex gap-2 text-[13px] leading-relaxed text-foreground/75">
+                  <span aria-hidden="true" className="mt-1.5 size-1 shrink-0 rounded-full bg-amber-600/70" />
+                  {point}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </aside>
       );
 
     case "takeaway":
@@ -50,7 +113,7 @@ function BlockView({ block }: { block: Block }) {
             <Lightbulb className="size-3.5" />
             Key takeaway
           </p>
-          <p className="mt-2 text-[15px] font-medium leading-relaxed">{block.text}</p>
+          <p className="mt-2 text-[15.5px] font-medium leading-relaxed text-pretty">{block.text}</p>
         </aside>
       );
 
@@ -68,7 +131,7 @@ function BlockView({ block }: { block: Block }) {
       return (
         <div className={cn("flex gap-2.5 rounded-xl border p-4", styles)}>
           <Icon className="mt-0.5 size-4 shrink-0 opacity-70" />
-          <p className="text-[13.5px] leading-relaxed">{block.text}</p>
+          <p className="text-[14px] leading-relaxed text-pretty">{block.text}</p>
         </div>
       );
     }
@@ -77,7 +140,7 @@ function BlockView({ block }: { block: Block }) {
       return (
         <blockquote className="rounded-xl border border-border/70 bg-muted/30 p-5">
           <Quote className="size-4 text-muted-foreground/60" />
-          <p className="mt-2 text-[15px] italic leading-relaxed text-foreground/85">
+          <p className="mt-2 text-[16px] italic leading-relaxed text-foreground/85 text-pretty">
             {block.text}
           </p>
           {block.attribution && (
@@ -112,7 +175,7 @@ function BlockView({ block }: { block: Block }) {
           <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             {block.term}
           </dt>
-          <dd className="mt-1.5 text-[14.5px] leading-relaxed text-foreground/85">
+          <dd className="mt-1.5 text-[15px] leading-relaxed text-foreground/85 text-pretty">
             {block.text}
           </dd>
         </dl>
@@ -133,7 +196,7 @@ function BlockView({ block }: { block: Block }) {
                 {side.points.map((point, pointIndex) => (
                   <li
                     key={pointIndex}
-                    className="flex gap-2 text-[13.5px] leading-relaxed text-foreground/85"
+                    className="flex gap-2 text-[14px] leading-relaxed text-foreground/85"
                   >
                     <span aria-hidden="true" className="mt-1.5 size-1 shrink-0 rounded-full bg-muted-foreground/50" />
                     {point}

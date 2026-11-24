@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gt, gte, lt, sql, type ExtractTablesWithRelations } from "drizzle-orm";
+import { and, asc, desc, eq, gt, gte, inArray, lt, sql, type ExtractTablesWithRelations } from "drizzle-orm";
 import type { PgTransaction } from "drizzle-orm/pg-core";
 import type { PostgresJsQueryResultHKT } from "drizzle-orm/postgres-js";
 import { dbEnabled, getDb } from "./db";
@@ -16,15 +16,21 @@ import {
   demoUpdateJob,
   demoCompleteLesson,
   demoUserCourses,
+  demoCheckpointReview,
+  demoRecordCheckpointReview,
   addDemoCourse,
 } from "./demo";
 import { env } from "./env";
 import { emptyCard, gradeStoredCard, previewIntervals, type Grade } from "./fsrs";
 import { levelForXp, slugify } from "./text";
+import { buildDiagramBlock, buildExampleBlock } from "./lesson-aids";
+import { checkpointRanges } from "./checkpoints";
 import type { CourseDraft } from "./ai/schema";
 import type {
   ActiveCourse,
   Block,
+  CheckpointQuestion,
+  CheckpointReview,
   CourseDetail,
   CourseSummary,
   DashboardData,
@@ -235,13 +241,6 @@ export async function getDashboard(userId: string): Promise<DashboardData> {
     .from(s.friendships)
     .where(and(eq(s.friendships.userId, userId), eq(s.friendships.status, "accepted")));
 
-  const curatedRows = await db
-    .select()
-    .from(s.courses)
-    .where(and(eq(s.courses.isCurated, true), eq(s.courses.isPublished, true)))
-    .orderBy(desc(s.courses.createdAt))
-    .limit(6);
-
   const activeRows = await db
     .select({
       course: s.courses,
@@ -300,7 +299,6 @@ export async function getDashboard(userId: string): Promise<DashboardData> {
     dueCount: dueRow?.count ?? 0,
     active,
     history,
-    curated: curatedRows.map(toSummary),
     stats: {
       lessonsThisWeek: week?.lessons ?? 0,
       minutesThisWeek: week?.minutes ?? 0,
@@ -321,7 +319,7 @@ export async function getCourse(
   const [course] = await db.select().from(s.courses).where(eq(s.courses.id, courseId)).limit(1);
   if (!course) return null;
 
-  const [modules, lessons, progress, completed, sourceRow] = await Promise.all([
+  const [modules, lessons, progress, completed, checkpointRows, sourceRow] = await Promise.all([
     db.select().from(s.modules).where(eq(s.modules.courseId, courseId)).orderBy(asc(s.modules.position)),
     db.select().from(s.lessons).where(eq(s.lessons.courseId, courseId)).orderBy(asc(s.lessons.position)),
     db
@@ -339,6 +337,16 @@ export async function getCourse(
           eq(s.lessonProgress.status, "completed"),
         ),
       ),
+    db
+      .select()
+      .from(s.checkpointProgress)
+      .where(
+        and(
+          eq(s.checkpointProgress.userId, userId),
+          eq(s.checkpointProgress.courseId, courseId),
+        ),
+      )
+      .orderBy(asc(s.checkpointProgress.checkpointIndex)),
     db
       .select({ metadata: s.sources.metadata })
       .from(s.sources)
@@ -379,6 +387,12 @@ export async function getCourse(
           estimatedMinutes: lesson.estimatedMinutes,
           completed: completedSet.has(lesson.id),
         })),
+    })),
+    checkpointReviews: checkpointRows.map((row) => ({
+      index: row.checkpointIndex,
+      score: row.score,
+      total: row.total,
+      completedAt: row.completedAt.toISOString(),
     })),
   };
 }
@@ -442,29 +456,29 @@ export async function getLesson(
         .limit(1),
     ]);
 
-  let quiz = null;
+  const quizzes: NonNullable<LessonDetail["quiz"]>[] = [];
   if (quizRows[0]) {
-    const [question] = await db
+    const questionRows = await db
       .select()
       .from(s.questions)
       .where(eq(s.questions.quizId, quizRows[0].id))
-      .orderBy(asc(s.questions.position))
-      .limit(1);
+      .orderBy(asc(s.questions.position));
 
-    if (question) {
+    for (const question of questionRows) {
       const options = await db
         .select()
         .from(s.quizOptions)
         .where(eq(s.quizOptions.questionId, question.id))
         .orderBy(asc(s.quizOptions.position));
 
-      quiz = {
+      quizzes.push({
         id: quizRows[0].id,
+        questionId: question.id,
         question: question.prompt,
         options: options.map((option) => ({ id: option.id, label: option.label })),
         passScore: quizRows[0].passScore,
         points: question.points,
-      };
+      });
     }
   }
 
@@ -488,7 +502,8 @@ export async function getLesson(
     blocks: blocks.map((block) => block.payload as unknown as Block),
     audioUrl: row.lesson.audioUrl,
     audioStatus: row.lesson.audioStatus,
-    quiz,
+    quiz: quizzes[0] ?? null,
+    extraQuizzes: quizzes.slice(1),
     sourceRef: citation
       ? {
           label: citation.label,
@@ -502,10 +517,177 @@ export async function getLesson(
     prevLessonId: prevRow[0]?.id ?? null,
     completed: progressRow[0]?.status === "completed",
   };
+}/* ------------------------------------------------------------- checkpoints */
+
+/**
+ * A cumulative review after every four or five lessons. The question set
+ * deliberately takes two questions from each lesson in the block so the review
+ * cannot be passed by remembering only the most recent lesson.
+ */
+export async function getCheckpointReview(
+  courseId: string,
+  checkpointIndex: number,
+  userId: string,
+): Promise<CheckpointReview | null> {
+  if (demo()) return demoCheckpointReview(courseId, checkpointIndex);
+
+  const db = getDb();
+  const [course] = await db.select().from(s.courses).where(eq(s.courses.id, courseId)).limit(1);
+  if (!course) return null;
+
+  const [lessonRows, completedRows, progressRows] = await Promise.all([
+    db
+      .select({
+        id: s.lessons.id,
+        title: s.lessons.title,
+        position: s.lessons.position,
+        takeaway: s.lessons.keyTakeaway,
+      })
+      .from(s.lessons)
+      .where(eq(s.lessons.courseId, courseId))
+      .orderBy(asc(s.lessons.position)),
+    db
+      .select({ lessonId: s.lessonProgress.lessonId })
+      .from(s.lessonProgress)
+      .where(
+        and(
+          eq(s.lessonProgress.userId, userId),
+          eq(s.lessonProgress.courseId, courseId),
+          eq(s.lessonProgress.status, "completed"),
+        ),
+      ),
+    db
+      .select()
+      .from(s.checkpointProgress)
+      .where(
+        and(
+          eq(s.checkpointProgress.userId, userId),
+          eq(s.checkpointProgress.courseId, courseId),
+          eq(s.checkpointProgress.checkpointIndex, checkpointIndex),
+        ),
+      )
+      .limit(1),
+  ]);
+
+  const ranges = checkpointRanges(lessonRows.length);
+  const range = ranges[checkpointIndex - 1];
+  if (!range) return null;
+  const group = lessonRows.slice(range.start, range.end);
+  if (!group.length) return null;
+
+  const completedSet = new Set(completedRows.map((row) => row.lessonId));
+  const lessonIds = group.map((lesson) => lesson.id);
+
+  const rows = await db
+    .select({
+      lessonId: s.lessons.id,
+      lessonTitle: s.lessons.title,
+      lessonPosition: s.lessons.position,
+      quizId: s.quizzes.id,
+      questionId: s.questions.id,
+      prompt: s.questions.prompt,
+      explanation: s.questions.explanation,
+      points: s.questions.points,
+      optionId: s.quizOptions.id,
+      label: s.quizOptions.label,
+    })
+    .from(s.questions)
+    .innerJoin(s.quizzes, eq(s.quizzes.id, s.questions.quizId))
+    .innerJoin(s.lessons, eq(s.lessons.id, s.quizzes.lessonId))
+    .innerJoin(s.quizOptions, eq(s.quizOptions.questionId, s.questions.id))
+    .where(inArray(s.quizzes.lessonId, lessonIds))
+    .orderBy(
+      asc(s.lessons.position),
+      asc(s.questions.position),
+      asc(s.quizOptions.position),
+    );
+
+  const byLesson = new Map<string, CheckpointQuestion[]>();
+  for (const row of rows) {
+    const list = byLesson.get(row.lessonId) ?? [];
+    let question = list.find((item) => item.questionId === row.questionId);
+    if (!question) {
+      question = {
+        id: row.quizId,
+        questionId: row.questionId,
+        question: row.prompt,
+        options: [],
+        passScore: 60,
+        points: row.points,
+        lessonId: row.lessonId,
+        lessonTitle: row.lessonTitle,
+        lessonPosition: row.lessonPosition + 1,
+      };
+      list.push(question);
+      byLesson.set(row.lessonId, list);
+    }
+    question.options.push({ id: row.optionId, label: row.label });
+  }
+
+  // Two questions per lesson, interleaved so the first pass touches every lesson.
+  const picks = group.map((lesson) => {
+    const questions = byLesson.get(lesson.id) ?? [];
+    if (questions.length <= 2) return questions;
+    return [questions[0], questions[Math.floor(questions.length / 2)]];
+  });
+  const maxPicks = Math.max(0, ...picks.map((list) => list.length));
+  const selected: CheckpointQuestion[] = [];
+  for (let round = 0; round < maxPicks; round++) {
+    for (const list of picks) {
+      if (list[round]) selected.push(list[round]);
+    }
+  }
+
+  return {
+    courseId,
+    courseTitle: course.title,
+    index: checkpointIndex,
+    totalCheckpoints: ranges.length,
+    fromLesson: group[0].position + 1,
+    toLesson: group[group.length - 1].position + 1,
+    locked: group.some((lesson) => !completedSet.has(lesson.id)),
+    completedLessons: group.filter((lesson) => completedSet.has(lesson.id)).length,
+    totalLessons: group.length,
+    lessons: group.map((lesson) => ({
+      id: lesson.id,
+      title: lesson.title,
+      position: lesson.position + 1,
+      takeaway: lesson.takeaway,
+    })),
+    questions: selected,
+    completed: Boolean(progressRows[0]),
+    bestScore: progressRows[0]?.score ?? null,
+    bestTotal: progressRows[0]?.total ?? null,
+  };
+}
+
+export async function recordCheckpointReview(
+  userId: string,
+  courseId: string,
+  checkpointIndex: number,
+  score: number,
+  total: number,
+) {
+  if (demo()) return demoRecordCheckpointReview(courseId, checkpointIndex, score, total);
+
+  await getDb()
+    .insert(s.checkpointProgress)
+    .values({ userId, courseId, checkpointIndex, score, total })
+    .onConflictDoUpdate({
+      target: [
+        s.checkpointProgress.userId,
+        s.checkpointProgress.courseId,
+        s.checkpointProgress.checkpointIndex,
+      ],
+      set: {
+        score: sql`greatest(${s.checkpointProgress.score}, ${score})`,
+        total,
+        updatedAt: new Date(),
+      },
+    });
 }
 
 /* ------------------------------------------------------------------ review */
-
 export async function getDueCards(userId: string): Promise<DueCard[]> {
   if (demo()) return demoDueCards();
 
@@ -666,19 +848,30 @@ export async function gradeCard(userId: string, flashcardId: string, grade: Grad
 
 /* -------------------------------------------------------------------- quiz */
 
-export async function submitQuiz(userId: string, quizId: string, optionId: string) {
+export async function submitQuiz(
+  userId: string,
+  quizId: string,
+  optionId: string,
+  questionId?: string,
+) {
   if (demo()) return demoSubmitQuiz(quizId, optionId);
 
   const db = getDb();
   const [quiz] = await db.select().from(s.quizzes).where(eq(s.quizzes.id, quizId)).limit(1);
   if (!quiz) throw new Error("Quiz not found");
 
-  const [question] = await db
-    .select()
-    .from(s.questions)
-    .where(eq(s.questions.quizId, quizId))
-    .orderBy(asc(s.questions.position))
-    .limit(1);
+  const [question] = questionId
+    ? await db
+        .select()
+        .from(s.questions)
+        .where(and(eq(s.questions.quizId, quizId), eq(s.questions.id, questionId)))
+        .limit(1)
+    : await db
+        .select()
+        .from(s.questions)
+        .where(eq(s.questions.quizId, quizId))
+        .orderBy(asc(s.questions.position))
+        .limit(1);
   if (!question) throw new Error("Question not found");
 
   const options = await db
@@ -863,9 +1056,6 @@ export async function persistCourseDraft(args: {
       sourceUrl: args.sourceUrl,
       metadata: args.metadata,
     });
-    if (args.isCurated) {
-      // Demo seed marks curated courses via the dashboard seed, not here.
-    }
     const detail = demoCourse(courseId);
     return {
       courseId,
@@ -957,7 +1147,17 @@ export async function persistCourseDraft(args: {
           blocks.push({ type: "paragraph", text: paragraph });
         }
         blocks.push({ type: "bullets", items: item.bullets });
-        if (item.diagram) blocks.push({ type: "diagram", diagram: item.diagram });
+        const example = buildExampleBlock(item.steps);
+        if (example) blocks.push(example);
+        if (item.steps?.length) {
+          blocks.push({ type: "steps", title: "Do it yourself", items: item.steps });
+        }
+        if (item.diagram) {
+          blocks.push({ type: "diagram", diagram: item.diagram });
+        } else {
+          const diagram = buildDiagramBlock(item.title, item.steps);
+          if (diagram) blocks.push(diagram);
+        }
         blocks.push({ type: "takeaway", text: item.takeaway });
 
         await tx.insert(s.contentBlocks).values(
@@ -988,26 +1188,29 @@ export async function persistCourseDraft(args: {
           .values({ lessonId: lessonRow.id })
           .returning();
 
-        const [questionRow] = await tx
-          .insert(s.questions)
-          .values({
-            quizId: quizRow.id,
-            position: 0,
-            type: "single_choice",
-            prompt: item.quiz.question,
-            explanation: item.quiz.explanation,
-            points: 10,
-          })
-          .returning();
+        const questions = [item.quiz, ...(item.extraQuestions ?? [])];
+        for (const [questionIndex, quiz] of questions.entries()) {
+          const [questionRow] = await tx
+            .insert(s.questions)
+            .values({
+              quizId: quizRow.id,
+              position: questionIndex,
+              type: "single_choice",
+              prompt: quiz.question,
+              explanation: quiz.explanation,
+              points: 10,
+            })
+            .returning();
 
-        await tx.insert(s.quizOptions).values(
-          item.quiz.options.map((label, index) => ({
-            questionId: questionRow.id,
-            position: index,
-            label,
-            isCorrect: index === item.quiz.correctIndex,
-          })),
-        );
+          await tx.insert(s.quizOptions).values(
+            quiz.options.map((label, index) => ({
+              questionId: questionRow.id,
+              position: index,
+              label,
+              isCorrect: index === quiz.correctIndex,
+            })),
+          );
+        }
 
         for (const card of item.flashcards) {
           await tx

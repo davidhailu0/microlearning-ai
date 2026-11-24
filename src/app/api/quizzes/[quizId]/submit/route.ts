@@ -5,6 +5,7 @@ import { submitQuiz } from "@/lib/repo";
 
 const bodySchema = z.object({
   optionId: z.string().uuid(),
+  questionId: z.string().uuid().optional(),
 });
 
 export const runtime = "nodejs";
@@ -28,6 +29,6 @@ export async function POST(
     return NextResponse.json({ error: "Choose an answer first." }, { status: 400 });
   }
 
-  const result = await submitQuiz(user.id, quizId, parsed.data.optionId);
+  const result = await submitQuiz(user.id, quizId, parsed.data.optionId, parsed.data.questionId);
   return NextResponse.json(result);
 }

@@ -6,7 +6,7 @@ async function main() {
   console.log("demoUserId:", demoUserId);
   const courses = await listUserCourses(demoUserId,200);
   console.log("Number of demo courses:", courses.length);
-  courses.forEach((c: any, i: number) => {
+  courses.forEach((c, i) => {
     console.log(`Course ${i}:`, c.id, c.title?.slice(0, 50));
   });
 }

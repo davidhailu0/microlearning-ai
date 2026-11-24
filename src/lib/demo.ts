@@ -1,10 +1,13 @@
 import { emptyCard, gradeStoredCard, previewIntervals, type Grade } from "@/lib/fsrs";
+import { buildDiagramBlock, buildExampleBlock } from "@/lib/lesson-aids";
+import { checkpointRanges } from "@/lib/checkpoints";
 import { demoUserId } from "@/lib/env";
 import { levelForXp } from "@/lib/text";
 import type { CourseDraft, LessonDraft } from "@/lib/ai/schema";
 import type {
   ActiveCourse,
   Block,
+  CheckpointReview,
   CourseDetail,
   CourseSummary,
   DashboardData,
@@ -42,6 +45,7 @@ type DemoLessonRecord = {
   xpReward: number;
   blocks: Block[];
   quiz: DemoQuiz | null;
+  extraQuiz: DemoQuiz | null;
   cards: DemoCard[];
   sourceRef: LessonDetail["sourceRef"];
   audioUrl: string | null;
@@ -66,6 +70,7 @@ type DemoCourseRecord = {
   modules: DemoModuleRecord[];
   lessons: DemoLessonRecord[];
   completed: Set<string>;
+  checkpointReviews: Map<number, { score: number; total: number; completedAt: string }>;
   currentLessonId: string | null;
 };
 
@@ -97,442 +102,21 @@ function state(): DemoState {
 
 /* -------------------------------------------------------------------- seed */
 
-function lesson(
-  overrides: Partial<LessonDraft> & Pick<LessonDraft, "title" | "objective">,
-  index: number,
-): LessonDraft {
-  return {
-    hook: `${overrides.title} is easier to see once you know what to look for.`,
-    paragraphs: [
-      "The useful version of this idea is smaller than it looks. Hold one clear model in your head, then hang the details on it.",
-      "When you change one part of a system, the change travels. The result can feel like resistance, but it is usually structure doing its job.",
-    ],
-    bullets: [
-      "A model is a tool for prediction, not a complete description.",
-      "Feedback turns a single action into a pattern over time.",
-      "Structural changes beat heroic effort.",
-    ],
-    takeaway: "Name the loop and the delay, and most of the behaviour becomes predictable.",
-    diagram:
-      index === 1
-        ? {
-            type: "cycle",
-            title: "The feedback loop",
-            nodes: [
-              { id: "a", label: "Action", emphasis: false },
-              { id: "b", label: "Result", emphasis: false },
-              { id: "c", label: "Adjustment", emphasis: true },
-            ],
-            edges: [
-              { from: "a", to: "b", label: "produces" },
-              { from: "b", to: "c", label: "triggers" },
-              { from: "c", to: "a", label: "changes" },
-            ],
-          }
-        : null,
-    quiz: {
-      question: `Which statement best captures ${overrides.title.toLowerCase()}?`,
-      options: [
-        "It is a fixed set of facts to memorise.",
-        "It is a structure whose feedback explains its behaviour.",
-        "It only works when nothing else changes.",
-        "It is best understood by studying each part alone.",
-      ],
-      correctIndex: 1,
-      explanation:
-        "The point of the model is the relationship between parts. Isolated facts don't predict behaviour; feedback does.",
-    },
-    flashcards: [
-      {
-        front: `What is the core idea behind ${overrides.title.toLowerCase()}?`,
-        back: "Inputs move through a mechanism and return a result that changes the next input.",
-      },
-      {
-        front: "What should you look for first when a system behaves unexpectedly?",
-        back: "The loop and the delay — not a broken component.",
-      },
-    ],
-    ...overrides,
-  };
-}
-
-export function heroDraft(): CourseDraft {
-  return {
-    title: "Thinking in Systems",
-    description:
-      "A working model of why systems surprise us — stocks, feedback, delays, and the small places where change actually sticks.",
-    category: "Systems thinking",
-    level: "beginner",
-    coverEmoji: "🌀",
-    tags: ["mental models", "feedback", "decision-making"],
-    modules: [
-      {
-        title: "Seeing the system",
-        summary: "Stop explaining events by pointing at a culprit. Start seeing structure.",
-        lessons: [
-          lesson(
-            {
-              title: "Why systems surprise us",
-              objective: "Explain why the same structure produces different outcomes over time.",
-              hook: "We blame the event. The event is usually the last domino, not the cause.",
-              paragraphs: [
-                "When something goes wrong, the instinct is to find the person or moment responsible. Systems thinking asks a different question: what structure made that moment likely?",
-                "A system is a set of parts that influence each other. Its behaviour comes from the relationships, not from any single part. That is why replacing a part rarely fixes the pattern.",
-                "The surprise is the point. If you can explain why the behaviour was predictable, you have found the system.",
-              ],
-              bullets: [
-                "Events are snapshots; structure is the generator of events.",
-                "Blame is a poor guide to leverage.",
-                "The same structure tends to reproduce the same outcome.",
-              ],
-              takeaway: "Look one level below the event: what arrangement keeps producing it?",
-            },
-            0,
-          ),
-          lesson(
-            {
-              title: "Stocks, flows, and the bathtub",
-              objective: "Read any accumulating quantity as a stock with inflows and outflows.",
-              hook: "A bathtub is the most honest model in economics.",
-              paragraphs: [
-                "A stock is anything that accumulates: water, money, trust, carbon, skill. A flow is the rate at which it enters or leaves.",
-                "The level only changes when the flows differ. Inflow equals outflow, and the level holds steady even though everything is still moving.",
-                "Most arguments about levels are really arguments about flows, and most shocks are felt through the delay between them.",
-              ],
-              bullets: [
-                "Stocks buffer; flows drive.",
-                "A steady level can hide a large turnover.",
-                "You cannot fix a stock problem with a one-time flow.",
-              ],
-              takeaway: "Name the stock, then name what is filling and draining it.",
-            },
-            1,
-          ),
-          lesson(
-            {
-              title: "Everything is connected",
-              objective: "Trace a change to its second- and third-order effects.",
-              hook: "The first consequence is rarely the one that matters.",
-              paragraphs: [
-                "Systems are loops, not lists. Pull one lever and the effect travels, arriving somewhere else as a surprise.",
-                "Second-order effects are not side effects. They are the system's response, and they often dominate the first-order win.",
-                "The practical move is to ask: and then what? Three times.",
-              ],
-              bullets: [
-                "Every intervention produces a response.",
-                "The response is where the leverage or the trap lives.",
-                "Ask 'and then what?' before committing.",
-              ],
-              takeaway: "The system always answers. Plan for the answer, not just the action.",
-            },
-            2,
-          ),
-        ],
-      },
-      {
-        title: "Feedback",
-        summary: "Loops, delays, and the reason good decisions oscillate.",
-        lessons: [
-          lesson(
-            {
-              title: "Reinforcing loops",
-              objective: "Identify compounding loops and their runaway risk.",
-              hook: "Success that feeds itself is either a flywheel or a fire.",
-              paragraphs: [
-                "A reinforcing loop returns its own output as more input. Growth, panic, reputation, and compound interest all share this shape.",
-                "These loops look like straight lines for a while, then bend sharply. The bend is not a new force; it is the loop becoming visible.",
-                "Every reinforcing loop eventually meets a limit. The interesting question is where that limit sits.",
-              ],
-              bullets: [
-                "Reinforcing loops amplify whatever they carry.",
-                "Exponential curves are loops seen late.",
-                "Find the limit before celebrating the curve.",
-              ],
-              takeaway: "Ask what would have to run out for this loop to stop.",
-            },
-            3,
-          ),
-          lesson(
-            {
-              title: "Balancing loops",
-              objective: "Explain how systems resist change and stay near a target.",
-              hook: "The thermostat is not stubborn. It is doing exactly what it was built to do.",
-              paragraphs: [
-                "A balancing loop compares the current state with a goal and acts to close the gap. It is the source of stability and the source of resistance.",
-                "Push a balancing system and it pushes back. That is not failure; it is the loop defending its target.",
-                "If you want a different level, change the goal or the feedback — not the effort.",
-              ],
-              bullets: [
-                "Stability is an active achievement, not an absence of change.",
-                "Resistance is information about the target.",
-                "Changing the target beats pushing harder.",
-              ],
-              takeaway: "When a system keeps returning to the same place, find its goal.",
-            },
-            4,
-          ),
-          lesson(
-            {
-              title: "Delays make us oscillate",
-              objective: "Predict overshoot when feedback lags.",
-              hook: "The shower problem explains most bad policy.",
-              paragraphs: [
-                "When the signal arrives late, you keep acting on information that is already stale. You overshoot, then overcorrect.",
-                "Oscillation is not a sign that someone is foolish. It is what a well-intentioned actor does inside a delay.",
-                "The fix is usually slower action, shorter feedback, or a buffer — not more force.",
-              ],
-              bullets: [
-                "Delay converts a good decision into a bad pattern.",
-                "Overshoot is structural, not personal.",
-                "Shorten the loop or dampen the response.",
-              ],
-              takeaway: "Before turning the dial again, check how old your information is.",
-            },
-            5,
-          ),
-        ],
-      },
-      {
-        title: "Leverage",
-        summary: "Where small changes actually change the system.",
-        lessons: [
-          lesson(
-            {
-              title: "Where leverage hides",
-              objective: "Find interventions that change structure rather than symptoms.",
-              hook: "The obvious lever is usually the weakest one.",
-              paragraphs: [
-                "Leverage is not effort. It is fit between an intervention and the structure producing the behaviour.",
-                "Parameters are easy to change and rarely matter. Rules, goals, and information flows change what the system does.",
-                "The highest leverage is usually a different question, not a bigger push.",
-              ],
-              bullets: [
-                "Symptoms are downstream of structure.",
-                "Rules and information flows outrank effort.",
-                "Small, well-placed changes can move a lot.",
-              ],
-              takeaway: "Change the rule, not the volume.",
-            },
-            6,
-          ),
-          lesson(
-            {
-              title: "Rules, goals, and paradigms",
-              objective: "Rank interventions by the depth of structure they touch.",
-              hook: "A budget is a belief with a number attached.",
-              paragraphs: [
-                "Rules decide who gets what and what counts as success. Goals decide which loops run. Paradigms decide what questions are askable.",
-                "Moving one level deeper usually makes the shallower fight irrelevant.",
-                "This is also why deep interventions attract resistance: they threaten the system's identity, not just its outputs.",
-              ],
-              bullets: [
-                "Parameters < rules < goals < paradigms.",
-                "Deeper leverage is slower and more contested.",
-                "Name the level you are actually changing.",
-              ],
-              takeaway: "Ask which layer your intervention touches — and whether you can go one deeper.",
-            },
-            7,
-          ),
-          lesson(
-            {
-              title: "Designing for resilience",
-              objective: "Build systems that can absorb surprise without collapsing.",
-              hook: "Efficiency optimises for the world you expected.",
-              paragraphs: [
-                "Resilience is the capacity to absorb disturbance and keep functioning. It comes from diversity, redundancy, and slack.",
-                "Those look like waste right up until the moment they are the only thing working.",
-                "The design question is not 'how do we prevent every shock?' but 'what can we lose without losing the system?'",
-              ],
-              bullets: [
-                "Slack is a feature, not a failure.",
-                "Diversity buys insurance against prediction error.",
-                "Design for the loss you can survive.",
-              ],
-              takeaway: "Keep one buffer you never optimise away.",
-            },
-            8,
-          ),
-        ],
-      },
-    ],
-  };
-}
-
-export type CuratedEntry = {
-  title: string;
-  prompt: string;
-  emoji: string;
-  category: string;
-  level: "beginner" | "intermediate" | "advanced";
-  description: string;
-  modules: { title: string; summary: string; lessons: string[] }[];
-};
-
-export const CURATED: CuratedEntry[] = [
-  {
-    title: "The Psychology of Habit",
-    prompt: "how habits form and how to change them",
-    emoji: "🔁",
-    category: "Behavioral science",
-    level: "beginner",
-    description:
-      "Habits are not willpower. They are cues, routines, and rewards — and once you can see the loop, you can edit it.",
-    modules: [
-      {
-        title: "The loop",
-        summary: "How a habit is actually built, and why intention is a small part of it.",
-        lessons: ["Your brain is a prediction machine", "Cue, routine, reward"],
-      },
-      {
-        title: "Why change fails",
-        summary: "The friction that keeps you stuck, and where to push instead.",
-        lessons: ["Willpower is the wrong lever", "The environment votes first"],
-      },
-      {
-        title: "Editing a loop",
-        summary: "Small changes that survive a bad week.",
-        lessons: ["Make it obvious, make it easy", "Recover faster than you quit"],
-      },
-    ],
-  },
-  {
-    title: "How LLMs Actually Work",
-    prompt: "how large language models work, intuitively",
-    emoji: "🧠",
-    category: "AI",
-    level: "intermediate",
-    description:
-      "No maths required. A working model of tokens, attention, and why a language model can seem to reason.",
-    modules: [
-      {
-        title: "The machine",
-        summary: "What is actually happening when you type a prompt.",
-        lessons: ["Tokens, not words", "Prediction, one token at a time"],
-      },
-      {
-        title: "Attention",
-        summary: "Why context changes what a word means.",
-        lessons: ["The problem with fixed meaning", "Attention as a weighted lookup"],
-      },
-      {
-        title: "Limits",
-        summary: "What the model cannot do, and why it sounds confident anyway.",
-        lessons: ["Why it hallucinates", "Context windows and forgetting"],
-      },
-    ],
-  },
-  {
-    title: "Design for Attention",
-    prompt: "designing products for attention without exploiting people",
-    emoji: "👁️",
-    category: "Design",
-    level: "intermediate",
-    description:
-      "Attention is scarce and easily taken. A short course on designing for it without treating people as inventory.",
-    modules: [
-      {
-        title: "The scarce resource",
-        summary: "Why attention behaves like a budget rather than a switch.",
-        lessons: ["Attention has a budget", "Friction is a design material"],
-      },
-      {
-        title: "Patterns that take",
-        summary: "The mechanics of compulsion, and who pays for it.",
-        lessons: ["The pull of the variable reward", "Dark patterns send the bill"],
-      },
-      {
-        title: "Patterns that give",
-        summary: "Design that leaves the user better off than it found them.",
-        lessons: ["Designing for intention", "Measure what you would defend"],
-      },
-    ],
-  },
-  {
-    title: "A Short History of Money",
-    prompt: "a short history of money and credit",
-    emoji: "🪙",
-    category: "History",
-    level: "beginner",
-    description:
-      "From tally sticks to central banks: money is a technology for remembering who owes whom.",
-    modules: [
-      {
-        title: "Before coins",
-        summary: "Credit is older than currency, and stranger.",
-        lessons: ["Debt came first", "Tally sticks and trust"],
-      },
-      {
-        title: "Coins and banks",
-        summary: "How metal became a system, and how banks joined in.",
-        lessons: ["Why metal won", "Banks create deposits"],
-      },
-      {
-        title: "Fiat and after",
-        summary: "What changed when money stopped being a promise of metal.",
-        lessons: ["Leaving the gold standard", "What money is now"],
-      },
-    ],
-  },
-  {
-    title: "Networks That Shape Us",
-    prompt: "how networks shape behaviour and ideas",
-    emoji: "🕸️",
-    category: "Sociology",
-    level: "beginner",
-    description:
-      "Your friends' friends change what you know, earn, and believe. An introduction to how networks actually work.",
-    modules: [
-      {
-        title: "Structure",
-        summary: "A network is a shape, and the shape decides what flows.",
-        lessons: ["Six degrees is a claim about shape", "Hubs and the long tail"],
-      },
-      {
-        title: "Contagion",
-        summary: "How behaviour and beliefs travel between people.",
-        lessons: ["How behaviour spreads", "Weak ties carry new information"],
-      },
-      {
-        title: "Design",
-        summary: "Why some networks trap you, and how to build bridges.",
-        lessons: ["Why some networks trap you", "Building bridges on purpose"],
-      },
-    ],
-  },
-  {
-    title: "Probability Without Formulas",
-    prompt: "probability intuition without formulas",
-    emoji: "🎲",
-    category: "Math",
-    level: "beginner",
-    description:
-      "Most probability mistakes are framing mistakes. Learn to see base rates, sample spaces, and luck clearly.",
-    modules: [
-      {
-        title: "Counting honestly",
-        summary: "Get the sample space right and most puzzles dissolve.",
-        lessons: ["The sample space does the work", "Coincidence is cheap"],
-      },
-      {
-        title: "Updating",
-        summary: "How to change your mind by the right amount.",
-        lessons: ["Base rates before stories", "Bayes in one sentence"],
-      },
-      {
-        title: "Risk",
-        summary: "Expected value is a tool, not a prophecy.",
-        lessons: ["Expected value is not a prediction", "Rare events and ruin"],
-      },
-    ],
-  },
-];
-
 function blocksFromDraft(draft: LessonDraft): Block[] {
   const blocks: Block[] = [{ type: "hook", text: draft.hook }];
   for (const paragraph of draft.paragraphs) blocks.push({ type: "paragraph", text: paragraph });
   blocks.push({ type: "bullets", items: draft.bullets });
-  if (draft.diagram) blocks.push({ type: "diagram", diagram: draft.diagram });
+  const example = buildExampleBlock(draft.steps);
+  if (example) blocks.push(example);
+  if (draft.steps?.length) {
+    blocks.push({ type: "steps", title: "Do it yourself", items: draft.steps });
+  }
+  if (draft.diagram) {
+    blocks.push({ type: "diagram", diagram: draft.diagram });
+  } else {
+    const diagram = buildDiagramBlock(draft.title, draft.steps);
+    if (diagram) blocks.push(diagram);
+  }
   blocks.push({ type: "takeaway", text: draft.takeaway });
   return blocks;
 }
@@ -618,6 +202,7 @@ export function addDemoCourse(
           passScore: 60,
           points: 10,
         },
+        extraQuiz: null,
         cards,
         sourceRef: item.sourceRef ?? null,
         audioUrl: null,
@@ -635,6 +220,37 @@ export function addDemoCourse(
         });
       }
     }
+  }
+
+  // Every demo lesson gets a second checkpoint question from its first card.
+  const allCards = lessons.flatMap((lesson) => lesson.cards);
+  for (const lesson of lessons) {
+    const card = lesson.cards[0];
+    if (!card) continue;
+    const distractors = [
+      ...new Set(
+        allCards
+          .filter((other) => other.id !== card.id && other.back !== card.back)
+          .map((other) => other.back),
+      ),
+    ].slice(0, 3);
+    if (distractors.length < 3) continue;
+
+    const correctIndex = lesson.position % 4;
+    const labels = [...distractors];
+    labels.splice(correctIndex, 0, card.back);
+    lesson.extraQuiz = {
+      id: crypto.randomUUID(),
+      question: `What does “${card.front}” mean?`,
+      options: labels.map((label, index) => ({
+        id: crypto.randomUUID(),
+        label,
+        isCorrect: index === correctIndex,
+      })),
+      explanation: `${card.front}: ${card.back}`,
+      passScore: 60,
+      points: 10,
+    };
   }
 
   const metaRecord = meta.metadata as
@@ -658,6 +274,7 @@ export function addDemoCourse(
     modules,
     lessons,
     completed: new Set(),
+    checkpointReviews: new Map(),
     currentLessonId: lessons[0]?.id ?? null,
   });
 
@@ -701,86 +318,12 @@ function seed(): DemoState {
     cards: new Map(),
     cardStates: new Map(),
     jobs: new Map(),
-    stats: { lessonsThisWeek: 6, minutesThisWeek: 41, reviewsToday: 12 },
+    stats: { lessonsThisWeek: 0, minutesThisWeek: 0, reviewsToday: 0 },
   };
 
   g.__lumenDemo = store;
 
-  const heroId = addDemoCourse(heroDraft(), {
-    sourceKind: "curated",
-    sourceTitle: "Thinking in Systems",
-    sourceAuthor: "Lumen Library",
-  });
-  const hero = store.courses.get(heroId)!;
-  hero.summary.isCurated = true;
-  hero.completed = new Set([hero.lessons[0].id, hero.lessons[1].id]);
-  hero.currentLessonId = hero.lessons[2].id;
-
-  for (const [index, curated] of CURATED.entries()) {
-    const draft = curatedDraft(curated);
-    const id = addDemoCourse(draft, { sourceKind: "curated", sourceTitle: curated.title });
-    const record = store.courses.get(id)!;
-    record.summary.isCurated = true;
-    record.summary.coverColor = ["emerald", "sky", "violet", "rose", "cyan", "amber"][index % 6];
-  }
-
-  // Only completed lessons enter the review schedule.
-  for (const lessonId of hero.completed) ensureDemoCardStates(lessonId);
-
-  const heroCards = hero.lessons
-    .filter((lesson) => hero.completed.has(lesson.id))
-    .flatMap((lesson) => lesson.cards);
-
-  heroCards.slice(0, 4).forEach((card, index) => {
-    const current = store.cardStates.get(card.id);
-    if (!current) return;
-    store.cardStates.set(card.id, {
-      ...current,
-      due: new Date(Date.now() - (index + 1) * 3_600_000),
-    });
-  });
-
   return store;
-}
-
-export function curatedDraft(entry: CuratedEntry): CourseDraft {
-  let index = 0;
-
-  const modules = entry.modules.map((module) => ({
-    title: module.title,
-    summary: module.summary,
-    lessons: module.lessons.map((lessonTitle) =>
-      lesson(
-        {
-          title: lessonTitle,
-          objective: `Explain ${lessonTitle.toLowerCase()} in plain language, and name where the idea breaks down.`,
-          hook: `Most explanations of ${lessonTitle.toLowerCase()} start with vocabulary. Start with the mechanism instead.`,
-          paragraphs: [
-            `${lessonTitle} is easier to see once you know what to look for. Hold one mechanism in mind — what causes what, in which order — and the details have somewhere to attach.`,
-            `This sits inside a larger argument about ${entry.prompt}. The useful version is small: a claim you can test against your own experience, rather than a list to memorise.`,
-            `So the skill is not recall. It is noticing the moment the idea applies, and the moment it stops applying.`,
-          ],
-          bullets: [
-            "Start with the mechanism, not the vocabulary.",
-            "Look for the feedback before blaming a part.",
-            "Prefer a small test over a large opinion.",
-          ],
-          takeaway: `You do not need the whole field — you need one model of ${entry.prompt.toLowerCase()} you can use tomorrow.`,
-        },
-        index++,
-      ),
-    ),
-  }));
-
-  return {
-    title: entry.title,
-    description: entry.description,
-    category: entry.category,
-    level: entry.level,
-    coverEmoji: entry.emoji,
-    tags: [entry.category.toLowerCase(), "curated"],
-    modules,
-  };
 }
 
 /* ---------------------------------------------------------------- reading */
@@ -838,12 +381,6 @@ export function demoDashboard(): DashboardData {
       };
     });
 
-  const curated = [...store.courses.values()]
-    .filter((course) => course.summary.isCurated)
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-    .slice(0, 6)
-    .map(summaryOf);
-
   return {
     user: {
       id: store.user.id,
@@ -860,7 +397,6 @@ export function demoDashboard(): DashboardData {
     dueCount,
     active,
     history: demoUserCourses(6),
-    curated,
     stats: store.stats,
   };
 }
@@ -891,12 +427,87 @@ export function demoCourse(courseId: string): CourseDetail | null {
           completed: record.completed.has(lesson.id),
         })),
     })),
+    checkpointReviews: [...record.checkpointReviews.entries()].map(([index, review]) => ({
+      index,
+      ...review,
+    })),
   };
+}
+
+export function demoCheckpointReview(
+  courseId: string,
+  checkpointIndex: number,
+): CheckpointReview | null {
+  const record = state().courses.get(courseId);
+  if (!record) return null;
+
+  const ranges = checkpointRanges(record.lessons.length);
+  const range = ranges[checkpointIndex - 1];
+  if (!range) return null;
+
+  const group = record.lessons.slice(range.start, range.end);
+  const questions: CheckpointReview["questions"] = [];
+  const toQuestion = (quiz: DemoQuiz, lesson: DemoLessonRecord): CheckpointReview["questions"][number] => ({
+    id: quiz.id,
+    questionId: quiz.id,
+    question: quiz.question,
+    options: quiz.options.map(({ id, label }) => ({ id, label })),
+    passScore: quiz.passScore,
+    points: quiz.points,
+    lessonId: lesson.id,
+    lessonTitle: lesson.title,
+    lessonPosition: lesson.position + 1,
+  });
+
+  for (const lesson of group) {
+    if (lesson.quiz) questions.push(toQuestion(lesson.quiz, lesson));
+    if (lesson.extraQuiz) questions.push(toQuestion(lesson.extraQuiz, lesson));
+  }
+  const saved = record.checkpointReviews.get(checkpointIndex);
+
+  return {
+    courseId,
+    courseTitle: record.summary.title,
+    index: checkpointIndex,
+    totalCheckpoints: ranges.length,
+    fromLesson: group[0].position + 1,
+    toLesson: group[group.length - 1].position + 1,
+    locked: group.some((lesson) => !record.completed.has(lesson.id)),
+    completedLessons: group.filter((lesson) => record.completed.has(lesson.id)).length,
+    totalLessons: group.length,
+    lessons: group.map((lesson) => ({
+      id: lesson.id,
+      title: lesson.title,
+      position: lesson.position + 1,
+      takeaway: lesson.takeaway,
+    })),
+    questions,
+    completed: Boolean(saved),
+    bestScore: saved?.score ?? null,
+    bestTotal: saved?.total ?? null,
+  };
+}
+
+export function demoRecordCheckpointReview(
+  courseId: string,
+  checkpointIndex: number,
+  score: number,
+  total: number,
+) {
+  const record = state().courses.get(courseId);
+  if (!record) return;
+  const previous = record.checkpointReviews.get(checkpointIndex);
+  record.checkpointReviews.set(checkpointIndex, {
+    score: Math.max(previous?.score ?? 0, score),
+    total,
+    completedAt: previous?.completedAt ?? new Date().toISOString(),
+  });
 }
 
 function quizView(quiz: DemoQuiz): QuizView {
   return {
     id: quiz.id,
+    questionId: quiz.id,
     question: quiz.question,
     options: quiz.options.map(({ id, label }) => ({ id, label })),
     passScore: quiz.passScore,
@@ -928,6 +539,7 @@ export function demoLesson(lessonId: string): LessonDetail | null {
       audioUrl: record.audioUrl,
       audioStatus: record.audioStatus,
       quiz: record.quiz ? quizView(record.quiz) : null,
+      extraQuizzes: record.extraQuiz ? [quizView(record.extraQuiz)] : [],
       sourceRef: record.sourceRef,
       nextLessonId: course.lessons[index + 1]?.id ?? null,
       prevLessonId: course.lessons[index - 1]?.id ?? null,
@@ -1003,16 +615,18 @@ export function demoGradeCard(flashcardId: string, grade: Grade) {
 export function demoSubmitQuiz(quizId: string, optionId: string) {
   for (const course of state().courses.values()) {
     for (const lesson of course.lessons) {
-      if (lesson.quiz?.id !== quizId) continue;
-      const correct = lesson.quiz.options.find((option) => option.isCorrect);
-      const isCorrect = correct?.id === optionId;
-      if (isCorrect) state().user.xp += lesson.quiz.points;
-      return {
-        correct: Boolean(isCorrect),
-        correctOptionId: correct?.id ?? null,
-        explanation: lesson.quiz.explanation,
-        points: isCorrect ? lesson.quiz.points : 0,
-      };
+      for (const quiz of [lesson.quiz, lesson.extraQuiz]) {
+        if (!quiz || quiz.id !== quizId) continue;
+        const correct = quiz.options.find((option) => option.isCorrect);
+        const isCorrect = correct?.id === optionId;
+        if (isCorrect) state().user.xp += quiz.points;
+        return {
+          correct: Boolean(isCorrect),
+          correctOptionId: correct?.id ?? null,
+          explanation: quiz.explanation,
+          points: isCorrect ? quiz.points : 0,
+        };
+      }
     }
   }
   throw new Error("Quiz not found");

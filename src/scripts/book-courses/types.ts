@@ -13,6 +13,8 @@ export type DraftLesson = {
   hook: string;
   paragraphs: string[];
   bullets: string[];
+  /** Hands-on implementation steps the learner can follow in order. */
+  steps?: { title: string; detail: string }[];
   takeaway: string;
   diagram: DraftDiagram | null;
   quiz: {
@@ -21,11 +23,18 @@ export type DraftLesson = {
     correctIndex: number;
     explanation: string;
   };
+  /** Additional questions persisted under the same quiz. */
+  extraQuestions?: {
+    question: string;
+    options: string[];
+    correctIndex: number;
+    explanation: string;
+  }[];
   flashcards: { front: string; back: string }[];
   sourceRef: {
     label: string;
-    pageStart: number | null;
-    pageEnd: number | null;
+    pageStart?: number | null;
+    pageEnd?: number | null;
     note: string;
     sectionIndexes: number[];
   };
@@ -42,6 +51,8 @@ export type DraftModule = {
 
 export type DraftCourse = {
   title: string;
+  /** Legacy generated drafts may carry the source kind. */
+  sourceKind?: "pdf" | "epub" | "text";
   description: string;
   category: string;
   level: "beginner" | "intermediate" | "advanced";

@@ -1,13 +1,13 @@
 # Lumen
 
 Turn any topic, link, PDF, or EPUB into a visual micro-course you can finish in one sitting.
-Three-minute lessons, one quiz each, an AI tutor that stays grounded in the lesson, and
+Short lessons, a five-question check, an AI tutor that stays grounded in the lesson, and
 FSRS spaced repetition for the ideas worth keeping.
 
 > **Zero-config demo mode.** `npm install && npm run dev` works with no database and no API
-> key. Curated courses, the review loop, quizzes, and the tutor all run against an in-memory
-> store; add `DATABASE_URL` and an AI key (`OPENAI_API_KEY` or `OPENROUTER_API_KEY`)
-> to switch to Postgres and real generation.
+> key. The review loop, quizzes, and the tutor all run against an in-memory store; add
+> `DATABASE_URL` and an AI key (`OPENAI_API_KEY` or `OPENROUTER_API_KEY`) to switch to
+> Postgres and real generation.
 
 ---
 
@@ -21,12 +21,11 @@ npm run dev
 
 Open <http://localhost:3000>.
 
-Demo mode seeds:
+Demo mode starts with a populated learner profile but an empty library:
 
-- **Thinking in Systems** — a fully authored 9-lesson hero course, with two lessons already
-  completed so the dashboard, progress card, and review queue are populated.
-- **Six curated courses** — Habits, LLMs, Attention Design, Money, Networks, Probability.
-- 4 flashcards due today, 7-day streak, 2,480 XP.
+- 7-day streak and 2,480 XP
+- No seeded courses; generate one from the create bar to populate the dashboard
+- The review queue fills as you complete lessons
 
 Data lives in `globalThis.__lumenDemo` and resets when the dev server restarts.
 
@@ -45,7 +44,7 @@ A pooled Supabase connection string works. Then:
 
 ```bash
 npm run db:migrate   # applies drizzle/0000_*.sql
-npm run seed         # demo user, hero course, 6 curated courses, 2 completed lessons
+npm run seed         # demo user and streak only
 npm run dev
 ```
 
@@ -124,7 +123,7 @@ run more than one.
 | `npm run lint` | ESLint |
 | `npm run worker` | Standalone job worker (TTS, deferred generation) |
 | `npm run db:generate` / `db:migrate` / `db:push` / `db:studio` | Drizzle tooling |
-| `npm run seed` | Seed the demo user and curated catalogue |
+| `npm run seed` | Seed the demo user and streak only |
 
 ---
 
@@ -134,11 +133,15 @@ run more than one.
 
 | Route | Screen |
 | --- | --- |
-| `/` | Dashboard: greeting, create bar (Prompt / Link / File / Text), stat strip, active courses, generated-course history, review callout, searchable library |
+| `/` | Dashboard: greeting, create bar (Prompt / Link / File / Text), stat strip, active courses, generated-course history, review callout |
 | `/courses` | Every course you generated, newest first, with source filters (PDF / EPUB / Link / Text / Topic), search, and progress |
 | `/course/[courseId]` | Course detail: modules, lesson list, progress, continue |
 | `/lesson/[lessonId]` | Distraction-free reader: blocks, diagrams, audio player, quiz, complete bar, tutor FAB |
+| `/lesson/[lessonId]/read` | Source reader: the exact book sections a lesson cites, with page ranges and section navigation |
+| `/course/[courseId]/review/[checkpoint]` | Cumulative checkpoint review: questions from every lesson in a 4–5 lesson block, plus its key ideas |
 | `/review` | Flip-card deck with Hard / Good / Easy grading and keyboard shortcuts |
+
+Every lesson includes a worked **Example** block and at least one **visual diagram**. Missing diagrams are generated from the lesson's own implementation steps, so the visual stays tied to the material rather than a generic stock image. Checkpoint scores are stored in `checkpoint_progress`, and book passages are mirrored into `source_sections` so the source reader still works without a local `.cache`.
 
 The reader hides the global chrome, keeps a slim progress header, and returns you to the
 course or the next lesson when you finish.
@@ -233,7 +236,7 @@ app/
     ingest.ts              URL/PDF/EPUB extraction
     fsrs.ts                scheduler wrapper + interval previews
     repo.ts                all data access (Postgres + demo switch)
-    demo.ts                in-memory store, authored hero, curated catalogue
+    demo.ts                in-memory store for generated courses
     jobs.ts                job runner, inline/worker shared logic
     db/schema.ts           Drizzle schema (22 tables)
   src/db/                  migrations runner, seed
@@ -254,7 +257,7 @@ decisions), `../PDF-PIPELINE.md`, and `../V3-FULL-BOOK-VISUAL.md`.
 - Geist Sans / Geist Mono via `next/font`.
 - Amber accent for attention, emerald for success/completion, destructive red only for errors.
 - Keyboard: `space`/`enter` reveal a card, `1`/`h` hard, `2`/`g` good, `3`/`e` easy.
-- Reader typography: 15.5px / 1.78 line-height, max 2xl measure, `text-wrap: balance` on headings.
+- Reader typography: 16.5px / 1.8 line-height, 68ch measure, `text-wrap: pretty` on paragraphs and balance on headings.
 
 ---
 
@@ -291,4 +294,5 @@ console/network checks, and screenshots in light and dark mode at desktop and mo
 - The deterministic fallback generator is topic-agnostic by design — it keeps the product
   usable without a key, not to replace the model.
 - Friend streaks are modelled in the schema but not yet surfaced in the UI.
-- No git repository is initialised in this workspace yet.
+- The source reader loads parsed books from `.cache/books`. Those files are ignored by git and are not bundled for deployment; without them the reader shows the citation fallback.
+- `npm run lint` still reports legacy errors in `src/scripts`; application code and the scripts changed for the book work pass focused ESLint.

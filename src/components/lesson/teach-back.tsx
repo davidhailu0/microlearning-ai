@@ -60,7 +60,7 @@ export function TeachBack({
   const words = answer.trim() ? answer.trim().split(/\s+/).length : 0;
 
   return (
-    <section className="mt-10 rounded-xl border border-border/70 bg-muted/20 p-4 sm:p-5">
+    <section className="mt-4 rounded-xl border border-border/70 bg-muted/20 p-4 sm:p-5">
       <div className="flex items-start gap-2">
         <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-foreground text-background">
           <Eye className="size-3.5" />

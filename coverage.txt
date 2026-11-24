@@ -1,0 +1,61 @@
+=== COURSE INVENTORY (12) ===
+  [c5edfa90] Build Your Own Blockchain | text | 5 modules, 5 lessons, 5 citations | 29 min
+    coverage: Complete build path from blocks and PoW through transactions and consensus, extended with signatures, Merkle commitments, fork choice, difficulty, fees, and scaling.
+  [1771986a] Build Your Own Database | text | 5 modules, 5 lessons, 5 citations | 29 min
+    coverage: Complete build path from SSTables through a query-serving database, extended with the durability, transaction, compaction, planning, and protocol pieces a usable engine needs.
+  [ffba7bd0] Build Your Own Neural Network | text | 5 modules, 6 lessons, 6 citations | 34 min
+    coverage: Complete build path from matrix operations through forward and backward passes, extended with losses, optimizers, regularization, and evaluation.
+  [7bec114d] Build Your Own Operating System | text | 5 modules, 7 lessons, 7 citations | 38 min
+    coverage: Complete build path from bootloader through memory, scheduling, filesystem, and shell, extended with interrupts, paging, privilege transitions, syscalls, drivers, and context switching.
+  [3bff3559] Build Your Own Processor | text | 5 modules, 6 lessons, 6 citations | 34 min
+    coverage: Complete build path from register file and ALU through ISA, datapath, and assembly, extended with control logic, pipelining, hazards, caches, and branch prediction.
+  [a4300156] Build Your Own Programming Language | text | 5 modules, 5 lessons, 5 citations | 30 min
+    coverage: Complete build path from lexer and parser through interpreter and compiler, extended with scopes, type checking, functions, closures, bytecode, GC, and diagnostics.
+  [8bbcc622] Code: The Hidden Language of Computer Hardware and Software | epub | 4 modules, 12 lessons, 12 citations | 165 min
+    coverage: All 28 chapters are cited. Front matter and the index are excluded as non-teaching material.
+  [176e9800] Designing Data-Intensive Applications | epub | 5 modules, 18 lessons, 18 citations | 115 min
+    coverage: All 12 chapters and every body section are cited. Preface, glossary, and index are excluded.
+  [6594a96a] From Day Zero to Zero Day | pdf | 4 modules, 20 lessons, 20 citations | 79 min
+    coverage: The introduction and all 11 chapters (0-10) are cited. Only the opening pages are excluded.
+  [393ff64d] Fundamentals of Software Architecture | epub | 5 modules, 29 lessons, 29 citations | 110 min
+    coverage: All 27 chapters and every body section are cited. Index and colophon are excluded as back matter.
+  [79de52e6] Hacker Disassembling Uncovered | epub | 4 modules, 15 lessons, 15 citations | 219 min
+    coverage: Every body section from Protection Classifications through the How to… appendix is cited. Front matter is excluded.
+  [700af6ae] Structured Computer Organization | pdf | 4 modules, 16 lessons, 16 citations | 214 min
+    coverage: All 8 chapters and every chapter body section are cited. Front matter, appendices, and index are excluded.
+
+=== BOOK BODY COVERAGE (parsed sections vs citation indexes) ===
+  From Day Zero to Zero Day: 15/15 body sections cited; 16 parsed, 1 excluded
+    page ranges: 20 citations spanning pp. 15-321; 0 body page section(s) uncovered
+  Fundamentals of Software Architecture: 53/53 body sections cited; 55 parsed, 2 excluded
+  Structured Computer Organization: 34/34 body sections cited; 45 parsed, 11 excluded
+    page ranges: 16 citations spanning pp. 27-683; 0 body page section(s) uncovered
+  Code: The Hidden Language of Computer Hardware and Software: 28/28 body sections cited; 33 parsed, 5 excluded
+  Hacker Disassembling Uncovered: 43/43 body sections cited; 46 parsed, 3 excluded
+  Designing Data-Intensive Applications: 48/48 body sections cited; 52 parsed, 4 excluded
+
+=== TEXT COURSES: citation presence ===
+  Build Your Own Blockchain: 5/5 lessons labelled; 0 have parsed section indexes (text sources use step citations)
+  Build Your Own Database: 5/5 lessons labelled; 0 have parsed section indexes (text sources use step citations)
+  Build Your Own Neural Network: 6/6 lessons labelled; 0 have parsed section indexes (text sources use step citations)
+  Build Your Own Operating System: 7/7 lessons labelled; 0 have parsed section indexes (text sources use step citations)
+  Build Your Own Processor: 6/6 lessons labelled; 0 have parsed section indexes (text sources use step citations)
+  Build Your Own Programming Language: 5/5 lessons labelled; 0 have parsed section indexes (text sources use step citations)
+
+=== SOURCES TABLE ===
+  [epub] Code: The Hidden Language of Computer Hardware and Software by Charles Petzold | words=127898 chars=742039
+  [epub] Designing Data-Intensive Applications by Martin Kleppmann | words=264002 chars=1725030
+  [pdf] Structured Computer Organization by Andrew S. Tanenbaum and Todd Austin | words=334382 chars=1917274
+  [pdf] From Day Zero to Zero Day by Eugene Lim | words=99807 chars=664105
+  [text] Build Your Own Database by CodeCrafters community | words=55000 chars=400000
+  [text] Build Your Own Blockchain by CodeCrafters community | words=45000 chars=300000
+  [text] Build Your Own Neural Network by CodeCrafters community | words=55000 chars=350000
+  [text] Build Your Own Operating System by CodeCrafters community | words=45000 chars=300000
+  [text] Build Your Own Processor by CodeCrafters community | words=40000 chars=250000
+  [text] Build Your Own Programming Language by CodeCrafters community | words=50000 chars=350000
+  [epub] Fundamentals of Software Architecture by Mark Richards and Neal Ford | words=147300 chars=1016784
+  [epub] Hacker Disassembling Uncovered by Kris Kaspersky | words=82315 chars=500180
+
+=== TOTALS ===
+  courses: 12; lessons (denormalized): 144
+  citations: 144

@@ -1,0 +1,42 @@
+=== COURSE_PROGRESS (which course is the user on?) ===
+  course=Fundamentals of Software Architecture [393ff64d] lessonsDone=6/29 pct=21
+
+=== LESSON_PROGRESS (which lessons completed?) ===
+  "What Software Architecture Actually Is" in "Fundamentals of Software Architecture" [393ff64d] status=completed completed=Wed Nov 04 2026 14:36:04 GMT+0300 (East Africa Time)
+  "The Three Laws of Software Architecture" in "Fundamentals of Software Architecture" [393ff64d] status=completed completed=Wed Nov 04 2026 14:43:16 GMT+0300 (East Africa Time)
+  "What Architects Are Expected to Do" in "Fundamentals of Software Architecture" [393ff64d] status=completed completed=Wed Nov 04 2026 14:49:08 GMT+0300 (East Africa Time)
+  "Architectural Thinking: Design, Breadth, and the Caveman Trap" in "Fundamentals of Software Architecture" [393ff64d] status=completed completed=Wed Nov 04 2026 15:04:16 GMT+0300 (East Africa Time)
+  "Styles, Patterns, and the Big Ball of Mud" in "Fundamentals of Software Architecture" [393ff64d] status=completed completed=Wed Nov 04 2026 15:43:04 GMT+0300 (East Africa Time)
+  "Modularity and the Metrics of Code" in "Fundamentals of Software Architecture" [393ff64d] status=completed completed=Wed Nov 04 2026 16:25:43 GMT+0300 (East Africa Time)
+
+=== CARD_STATES (FSRS) ===
+  card=11331243 state=new due=Wed Nov 04 2026 14:36:04 GMT+0300 (East Africa Time) reps=0
+  card=5d537df5 state=new due=Wed Nov 04 2026 14:36:04 GMT+0300 (East Africa Time) reps=0
+  card=adf727c9 state=new due=Wed Nov 04 2026 14:43:16 GMT+0300 (East Africa Time) reps=0
+  card=b07eef84 state=new due=Wed Nov 04 2026 14:43:16 GMT+0300 (East Africa Time) reps=0
+  card=4b666748 state=new due=Wed Nov 04 2026 14:49:08 GMT+0300 (East Africa Time) reps=0
+  card=be3c5aec state=new due=Wed Nov 04 2026 14:49:08 GMT+0300 (East Africa Time) reps=0
+  card=bff32134 state=new due=Wed Nov 04 2026 15:04:16 GMT+0300 (East Africa Time) reps=0
+  card=370f54d9 state=new due=Wed Nov 04 2026 15:04:16 GMT+0300 (East Africa Time) reps=0
+  card=1f9a7c64 state=new due=Wed Nov 04 2026 15:43:04 GMT+0300 (East Africa Time) reps=0
+  card=da4658b4 state=new due=Wed Nov 04 2026 15:43:04 GMT+0300 (East Africa Time) reps=0
+  card=b3bae175 state=new due=Wed Nov 04 2026 16:25:43 GMT+0300 (East Africa Time) reps=0
+  card=7414c3eb state=new due=Wed Nov 04 2026 16:25:43 GMT+0300 (East Africa Time) reps=0
+
+=== DUPLICATE COURSE GROUPS (title + kind) ===
+  pdf::From Day Zero to Zero Day: 1 copy [6594a96a]
+  epub::Fundamentals of Software Architecture: 1 copy [393ff64d]
+  pdf::Structured Computer Organization: 1 copy [700af6ae]
+  epub::Code: The Hidden Language of Computer Hardware and Software: 1 copy [8bbcc622]
+  epub::Hacker Disassembling Uncovered: 1 copy [79de52e6]
+  epub::Designing Data-Intensive Applications: 1 copy [176e9800]
+  text::Build Your Own Database: 1 copy [1771986a]
+  text::Build Your Own Blockchain: 1 copy [c5edfa90]
+  text::Build Your Own Neural Network: 1 copy [ffba7bd0]
+  text::Build Your Own Operating System: 1 copy [7bec114d]
+  text::Build Your Own Processor: 1 copy [3bff3559]
+  text::Build Your Own Programming Language: 1 copy [a4300156]
+
+=== COURSE METADATA COLUMN ===
+  keys: id, ownerId, slug, title, description, category, level, coverEmoji, coverColor, isCurated, isPublished, sourceKind, sourceUrl, sourceTitle, sourceAuthor, language, estimatedMinutes, lessonCount, tags, createdAt, updatedAt
+  metadata value: undefined

@@ -1,0 +1,81 @@
+=== STATIC MAPPING CHECK (source files) ===
+
+From Day Zero to Zero Day
+  modules=4 lessons=20 questions=100 flashcards=100
+  bullets_bad=0 quiz_bad=0 flashcard_bad=0 missing_citation=0
+  citations: unique sectionIndexes=15 supplemental=0
+  diagrams: 20/20 lessons have diagrams
+
+Fundamentals of Software Architecture
+  modules=5 lessons=29 questions=145 flashcards=145
+  bullets_bad=0 quiz_bad=0 flashcard_bad=0 missing_citation=0
+  citations: unique sectionIndexes=53 supplemental=0
+  diagrams: 29/29 lessons have diagrams
+
+Structured Computer Organization
+  modules=4 lessons=16 questions=80 flashcards=80
+  bullets_bad=0 quiz_bad=0 flashcard_bad=0 missing_citation=0
+  citations: unique sectionIndexes=34 supplemental=0
+  diagrams: 16/16 lessons have diagrams
+
+Code: The Hidden Language of Computer Hardware and Software
+  modules=4 lessons=12 questions=60 flashcards=60
+  bullets_bad=0 quiz_bad=0 flashcard_bad=0 missing_citation=0
+  citations: unique sectionIndexes=28 supplemental=0
+  diagrams: 12/12 lessons have diagrams
+
+Hacker Disassembling Uncovered
+  modules=4 lessons=15 questions=75 flashcards=75
+  bullets_bad=0 quiz_bad=0 flashcard_bad=0 missing_citation=0
+  citations: unique sectionIndexes=43 supplemental=0
+  diagrams: 15/15 lessons have diagrams
+
+Designing Data-Intensive Applications
+  modules=5 lessons=18 questions=90 flashcards=90
+  bullets_bad=0 quiz_bad=0 flashcard_bad=0 missing_citation=0
+  citations: unique sectionIndexes=48 supplemental=0
+  diagrams: 18/18 lessons have diagrams
+
+Build Your Own Operating System
+  modules=5 lessons=7 questions=35 flashcards=35
+  bullets_bad=0 quiz_bad=0 flashcard_bad=0 missing_citation=0
+  citations: unique sectionIndexes=0 supplemental=7
+  diagrams: 7/7 lessons have diagrams
+
+Build Your Own Neural Network
+  modules=5 lessons=6 questions=30 flashcards=30
+  bullets_bad=0 quiz_bad=0 flashcard_bad=0 missing_citation=0
+  citations: unique sectionIndexes=0 supplemental=6
+  diagrams: 6/6 lessons have diagrams
+
+Build Your Own Processor
+  modules=5 lessons=6 questions=30 flashcards=39
+  bullets_bad=0 quiz_bad=0 flashcard_bad=0 missing_citation=0
+  citations: unique sectionIndexes=0 supplemental=6
+  diagrams: 6/6 lessons have diagrams
+
+Build Your Own Programming Language
+  modules=5 lessons=5 questions=25 flashcards=26
+  bullets_bad=0 quiz_bad=0 flashcard_bad=0 missing_citation=0
+  citations: unique sectionIndexes=0 supplemental=5
+  diagrams: 5/5 lessons have diagrams
+
+Build Your Own Blockchain
+  modules=5 lessons=5 questions=25 flashcards=25
+  bullets_bad=0 quiz_bad=0 flashcard_bad=0 missing_citation=0
+  citations: unique sectionIndexes=0 supplemental=5
+  diagrams: 5/5 lessons have diagrams
+
+Build Your Own Database
+  modules=5 lessons=5 questions=25 flashcards=25
+  bullets_bad=0 quiz_bad=0 flashcard_bad=0 missing_citation=0
+  citations: unique sectionIndexes=0 supplemental=5
+  diagrams: 5/5 lessons have diagrams
+
+=== TOTALS: 12 courses, 144 lessons ===
+  bullet violations:    0 (must be 0; 3-16 per lesson)
+  quiz violations:      0 (must be 0; 4 options and a valid correctIndex)
+  flashcard violations: 0 (must be 0; 2-8 per lesson)
+  lessons w/o citation: 0 (must be 0)
+  supplemental cites:   34 (text-source lessons without parsed section ranges)
+  lessons w/o diagram:  0 (must be 0)
